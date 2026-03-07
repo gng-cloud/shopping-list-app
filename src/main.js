@@ -64,8 +64,9 @@ const shoppingProgressBar = document.getElementById('shopping-progress-bar')
 
 // Éléments Profil & Famille (Vue 3)
 const profileEmail = document.getElementById('profile-email')
+const profileRole = document.getElementById('profile-role')
+const profileFamilyName = document.getElementById('profile-family-name')
 const familyMemberCount = document.getElementById('family-member-count')
-const modalFamilyName = document.getElementById('modal-family-name-text')
 const ownerActions = document.getElementById('owner-actions')
 const inviteForm = document.getElementById('invite-form')
 const inviteEmail = document.getElementById('invite-email')
@@ -250,10 +251,14 @@ async function updateProfileFamilyView() {
   const activeFamily = currentFamilies.find(f => f.id === activeFamilyId)
   if (!activeFamily) return
 
-  modalFamilyName.textContent = activeFamily.name
+  profileFamilyName.textContent = activeFamily.name
 
   // Vérifier si l'utilisateur est propriétaire
-  const role = activeFamily.family_members[0].role
+  const myMember = activeFamily.family_members.find(m => true) // role est dans l'objet car join !inner
+  const role = myMember ? myMember.role : 'member'
+
+  profileRole.textContent = role === 'owner' ? 'Propriétaire' : 'Membre'
+
   if (role === 'owner') {
     ownerActions.classList.remove('hidden')
   } else {
