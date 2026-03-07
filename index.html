@@ -1,201 +1,303 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr" class="light">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Family Shopping List</title>
+  <title>Family Cart</title>
   <link href="./src/style.css" rel="stylesheet">
 </head>
 
-<body class="text-gray-900 dark:text-gray-100 font-sans antialiased min-h-screen">
-  <!-- Dynamic blurred shapes for depth -->
-  <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-    <!-- Removed for flat design -->
-  </div>
+<body
+  class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-display">
+  <!-- AUTH SECTION (keep structure, update styles) -->
+  <section id="auth-section"
+    class="flex-1 flex flex-col justify-center items-center px-4 py-8 animate-slide-up bg-white dark:bg-slate-900 m-4 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800">
+    <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-6">
+      <span class="material-symbols-outlined text-primary text-3xl">shopping_cart</span>
+    </div>
+    <h1 class="text-3xl font-bold text-center mb-2">Family Cart</h1>
+    <p class="text-center text-slate-500 mb-8 font-medium">Gérez vos listes ensemble</p>
 
-  <div id="app" class="max-w-md mx-auto p-4 sm:p-6 pb-24 relative z-10">
-
-    <!-- AUTH SECTION -->
-    <section id="auth-section" class="mt-12 flat-card p-8 hidden animate-slide-up">
-      <div class="flex justify-center mb-6">
-        <div class="w-16 h-16 bg-[#ccfbf1] dark:bg-[#0f766e] rounded-full flex items-center justify-center">
-          <svg class="w-8 h-8 text-[#0D9488] dark:text-[#ccfbf1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-          </svg>
-        </div>
+    <form id="auth-form" class="space-y-4 w-full max-w-sm">
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-slate-700 dark:text-slate-300">Email</label>
+        <input type="email" id="email" required
+          class="block w-full rounded-xl px-4 py-3 bg-background-light dark:bg-background-dark border-transparent focus:border-primary focus:ring-primary outline-none"
+          placeholder="vous@exemple.com">
       </div>
-      <h1 class="text-3xl font-heading font-bold text-center mb-2 text-[#0D9488] dark:text-[#5eead4]">Family Cart</h1>
-      <p class="text-center text-[#14B8A6] dark:text-[#99f6e4] mb-8 font-medium">Manage your lists together</p>
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-slate-700 dark:text-slate-300">Mot de passe</label>
+        <input type="password" id="password" required
+          class="block w-full rounded-xl px-4 py-3 bg-background-light dark:bg-background-dark border-transparent focus:border-primary focus:ring-primary outline-none"
+          placeholder="••••••••">
+      </div>
+      <div id="auth-error" class="text-red-500 text-sm hidden font-medium text-center bg-red-100 p-2 rounded-lg py-2">
+      </div>
 
-      <form id="auth-form" class="space-y-5">
-        <div>
-          <label class="block text-sm font-semibold mb-1">Email</label>
-          <input type="email" id="email" required
-            class="block w-full rounded-xl flat-input px-4 py-3 sm:text-sm outline-none" placeholder="you@example.com">
-        </div>
-        <div>
-          <label class="block text-sm font-semibold mb-1">Password</label>
-          <input type="password" id="password" required
-            class="block w-full rounded-xl flat-input px-4 py-3 sm:text-sm outline-none" placeholder="••••••••">
-        </div>
-        <div id="auth-error" class="text-red-500 text-sm hidden font-medium text-center bg-red-100 p-2 rounded-lg py-2">
-        </div>
+      <div class="pt-2">
+        <button type="submit" id="login-btn"
+          class="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold px-4 py-3.5 rounded-xl transition-colors cursor-pointer">
+          Se connecter
+        </button>
+      </div>
+      <div>
+        <button type="button" id="signup-btn"
+          class="w-full bg-primary/10 hover:bg-primary/20 text-primary font-bold px-4 py-3.5 rounded-xl transition-colors border border-primary/20 cursor-pointer">
+          Créer un compte
+        </button>
+      </div>
+    </form>
+  </section>
 
-        <div class="pt-2">
-          <button type="submit" id="login-btn" class="w-full btn-primary px-4 py-3.5">
-            Sign In
-          </button>
-        </div>
-        <div>
-          <button type="button" id="signup-btn" class="w-full btn-secondary px-4 py-3.5">
-            Create Account
-          </button>
-        </div>
-      </form>
-    </section>
+  <!-- MAIN APP SECTION -->
+  <section id="main-section" class="hidden flex-1 flex flex-col w-full h-full animate-slide-up relative">
 
-    <!-- MAIN APP SECTION -->
-    <section id="main-section" class="hidden animate-slide-up">
-
+    <!-- VIEW: MA LISTE (Screen 1) -->
+    <div id="view-list" class="flex-1 flex flex-col w-full h-full relative">
       <!-- Header -->
-      <header class="flex justify-between items-center mb-6 pt-4">
-        <h1 class="text-3xl font-heading font-extrabold tracking-tight text-[#0D9488] dark:text-[#5eead4]">My List</h1>
-        <button id="logout-btn"
-          class="p-2 rounded-full hover:bg-[#d1fae5] dark:hover:bg-[#0f766e] text-[#134E4A] dark:text-[#ccfbf1] transition-colors">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-          </svg>
+      <header
+        class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-4 flex items-center gap-4 flex-row w-full">
+        <!-- Family selector used to be here, let's put it here or in Profile. Let's keep it here for quick switch -->
+        <div class="relative flex-1">
+          <select id="family-select"
+            class="appearance-none bg-transparent text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100 focus:outline-none cursor-pointer w-full">
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center text-primary">
+            <span class="material-symbols-outlined text-sm">expand_more</span>
+          </div>
+        </div>
+        <button
+          class="ml-auto flex items-center justify-center size-10 rounded-full hover:bg-pink-500/10 transition-colors group cursor-pointer"
+          title="Favoris">
+          <span
+            class="material-symbols-outlined text-slate-700 dark:text-slate-300 group-hover:text-pink-500 group-active:fill-current">favorite</span>
         </button>
       </header>
 
-      <!-- Family Info & active selector -->
-      <div class="glass-panel rounded-2xl p-4 mb-8">
-        <div class="flex items-center justify-between">
-          <div class="flex-grow pr-4">
-            <p class="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-wider mb-1">Active
-              Family</p>
-            <div class="relative">
-              <select id="family-select"
-                class="appearance-none w-full bg-transparent text-lg font-bold text-gray-900 dark:text-white focus:outline-none cursor-pointer">
-                <!-- Options populated dynamically -->
-              </select>
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center text-gray-500">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-              </div>
+      <main class="flex-1 overflow-y-auto pb-24">
+        <!-- Add Item Section -->
+        <section class="px-4 py-3">
+          <label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">Ajouter un article</label>
+          <form id="add-item-form" class="flex gap-2">
+            <div class="relative flex-1 group">
+              <input type="text" id="new-item-input" required
+                class="w-full h-12 pl-4 pr-12 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all text-base placeholder-slate-400 outline-none"
+                placeholder="Ex: Pommes, Lait..." />
+              <!-- Scan Button -->
+              <button type="button" id="scan-btn"
+                class="absolute right-12 top-1/2 -translate-y-1/2 size-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors cursor-pointer">
+                <span class="material-symbols-outlined text-xl">barcode_scanner</span>
+              </button>
+              <button type="submit"
+                class="absolute right-2 top-1/2 -translate-y-1/2 size-8 flex items-center justify-center bg-primary text-background-dark rounded-lg hover:bg-primary/90 transition-colors cursor-pointer">
+                <span class="material-symbols-outlined text-xl">add</span>
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Scanner Container (Hidden by default) -->
+        <div id="scanner-container"
+          class="hidden mx-4 mb-4 bg-black rounded-xl overflow-hidden relative aspect-square animate-slide-up">
+          <div id="reader" width="100%"></div>
+          <button id="close-scanner-btn"
+            class="absolute top-4 right-4 bg-white/20 p-2 rounded-full text-white hover:bg-white/40 backdrop-blur-md transition-colors z-20 cursor-pointer">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+          <p id="scanner-status"
+            class="absolute bottom-4 left-1/2 -translate-x-1/2 text-background-dark text-sm font-bold bg-primary px-4 py-2 rounded-full z-20 shadow-lg whitespace-nowrap">
+            Scanning...</p>
+        </div>
+
+        <!-- List Items Section -->
+        <section class="mt-4 px-4">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300">Articles à acheter</h2>
+            <span id="list-count" class="text-xs font-medium bg-slate-200 dark:bg-slate-800 px-2 py-1 rounded-full">0
+              article</span>
+          </div>
+          <ul id="shopping-list" class="space-y-3">
+            <li class="p-6 text-center text-slate-400 font-medium italic animate-pulse">Chargement...</li>
+          </ul>
+        </section>
+      </main>
+    </div>
+
+    <!-- VIEW: MODE COURSES (Screen 2) -->
+    <div id="view-shopping" class="hidden flex-1 flex flex-col w-full h-full relative">
+      <header
+        class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10">
+        <div class="flex items-center p-4 justify-between">
+          <div class="size-10"></div> <!-- Spacer -->
+          <h1 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center font-display">Mode Courses</h1>
+          <div class="size-10"></div> <!-- Spacer -->
+        </div>
+        <!-- Progress Section -->
+        <div class="px-6 pb-6 pt-2">
+          <div class="flex justify-between items-end mb-2">
+            <div>
+              <span id="shopping-progress-text" class="text-3xl font-bold text-primary">0%</span>
+              <span class="text-sm font-medium text-slate-500 dark:text-slate-400 ml-1">complété</span>
+            </div>
+            <p id="shopping-count-text" class="text-sm font-semibold text-slate-600 dark:text-slate-300">0 sur 0
+              articles</p>
+          </div>
+          <div class="w-full h-3 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div id="shopping-progress-bar" class="h-full bg-primary transition-all duration-500" style="width: 0%;">
             </div>
           </div>
-          <button id="manage-family-btn"
-            class="flex-shrink-0 bg-white/50 dark:bg-black/30 hover:bg-white/80 dark:hover:bg-black/50 p-2.5 rounded-xl border border-white/20 transition-all text-gray-700 dark:text-gray-200 shadow-sm backdrop-blur-sm">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-              </path>
-            </svg>
+        </div>
+      </header>
+
+      <main class="flex-1 overflow-y-auto px-4 py-4 space-y-4 pb-32">
+        <section>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-primary">shopping_basket</span>
+            <h3
+              class="text-lg font-bold font-display uppercase tracking-wider text-slate-500 dark:text-slate-400 text-xs">
+              Articles en rayons</h3>
+          </div>
+          <ul id="shopping-mode-list" class="space-y-3">
+            <!-- Populated dynamically by JS reusing the data -->
+            <li class="p-6 text-center text-slate-400 font-medium italic">Chargement...</li>
+          </ul>
+        </section>
+      </main>
+    </div>
+
+    <!-- VIEW: PROFIL & FAMILLE (Screen 3) -->
+    <div id="view-profile" class="hidden flex-1 flex flex-col w-full h-full relative overflow-y-auto pb-24">
+      <header
+        class="sticky top-0 z-10 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-4 flex items-center justify-center border-b border-primary/10">
+        <h1 class="text-lg font-bold tracking-tight">Mon Profil & Famille</h1>
+      </header>
+
+      <main class="flex-1 w-full mx-auto max-w-lg">
+        <section class="p-6 flex flex-col items-center">
+          <div class="relative">
+            <div
+              class="w-24 h-24 rounded-full border-4 border-primary/20 p-1 bg-background-light dark:bg-slate-800 flex items-center justify-center">
+              <span class="material-symbols-outlined text-4xl text-primary">person</span>
+            </div>
+          </div>
+          <div class="mt-4 text-center">
+            <h2 id="profile-email" class="text-xl font-bold">Utilisateur</h2>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">Chargement...</p>
+          </div>
+        </section>
+
+        <section class="mt-2 text-center text-xs text-slate-400 px-6">
+          Tous les membres de la famille partagent et modifient la même liste de courses en temps réel.
+        </section>
+
+        <section class="mt-6">
+          <div class="px-4 flex items-center justify-between mb-2">
+            <h3 class="text-lg font-bold">Ma Famille</h3>
+            <span id="family-member-count"
+              class="text-xs font-semibold text-primary px-2 py-1 bg-primary/10 rounded-full">0 Membres</span>
+          </div>
+          <div
+            class="bg-white dark:bg-slate-900 mx-4 flex flex-col rounded-xl divide-y divide-slate-100 dark:divide-slate-800 shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+
+            <ul id="members-list" class="flex flex-col w-full">
+              <!-- Members listed here -->
+            </ul>
+
+            <div id="owner-actions" class="hidden p-4 border-t border-slate-100 dark:border-slate-800 bg-primary/5">
+              <h4 class="text-xs font-bold text-primary flex items-center gap-2 uppercase tracking-widest mb-3">
+                <span class="material-symbols-outlined text-sm">person_add</span> Inviter un membre
+              </h4>
+              <form id="invite-form" class="flex gap-2">
+                <input type="email" id="invite-email" required
+                  class="flex-1 rounded-lg border border-primary/20 bg-white dark:bg-slate-900 px-3 py-2 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  placeholder="Email...">
+                <button type="submit"
+                  class="bg-primary hover:bg-primary/90 text-background-dark font-bold px-4 py-2 rounded-lg text-sm transition-colors cursor-pointer">
+                  Inviter
+                </button>
+              </form>
+              <p id="invite-msg" class="text-xs mt-2 hidden"></p>
+            </div>
+
+          </div>
+        </section>
+
+        <section class="mt-8 mb-8">
+          <h3 class="px-4 text-lg font-bold mb-2">Paramètres</h3>
+          <div
+            class="bg-white dark:bg-slate-900 mx-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+            <button id="logout-btn"
+              class="w-full flex items-center gap-4 p-4 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors cursor-pointer">
+              <div class="w-10 h-10 rounded-lg bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
+                <span class="material-symbols-outlined">logout</span>
+              </div>
+              <p class="flex-1 text-left font-medium">Déconnexion</p>
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- BOTTOM NAVIGATION (Shared across main-section) -->
+    <nav
+      class="fixed bottom-0 left-0 right-0 bg-white dark:bg-background-dark border-t border-slate-100 dark:border-slate-800 px-2 pb-6 pt-3 z-30">
+      <div class="flex justify-around items-center max-w-lg mx-auto">
+        <a id="nav-list" class="flex flex-col items-center gap-1 text-primary cursor-pointer w-20 transition-colors">
+          <span class="material-symbols-outlined text-[24px] fill-current">format_list_bulleted</span>
+          <span class="text-[10px] font-bold uppercase tracking-wider">Liste</span>
+        </a>
+        <a id="nav-shopping"
+          class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-600 hover:text-primary transition-colors cursor-pointer w-20">
+          <span class="material-symbols-outlined text-[24px]">shopping_basket</span>
+          <span class="text-[10px] font-bold uppercase tracking-wider">Courses</span>
+        </a>
+        <a id="nav-profile"
+          class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-600 hover:text-primary transition-colors cursor-pointer w-20">
+          <span class="material-symbols-outlined text-[24px]">person</span>
+          <span class="text-[10px] font-bold uppercase tracking-wider">Profil</span>
+        </a>
+      </div>
+    </nav>
+  </section>
+
+  <!-- TEMPLATES -->
+
+  <!-- Template for List View Item -->
+  <template id="item-template">
+    <li
+      class="item-row flex flex-col bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 group transition-all duration-300">
+      <div class="flex items-center justify-between p-4">
+        <div class="flex items-center gap-3 overflow-hidden flex-1">
+          <div
+            class="size-10 shrink-0 rounded-lg bg-background-light dark:bg-background-dark flex items-center justify-center item-icon-container">
+            <span class="material-symbols-outlined text-primary text-xl item-icon">category</span>
+          </div>
+          <div class="overflow-hidden">
+            <p class="item-name font-semibold text-slate-900 dark:text-slate-100 truncate transition-all duration-300">
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <button
+            class="item-delete text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-lg transition-colors cursor-pointer focus:outline-none">
+            <span class="material-symbols-outlined text-sm">remove</span>
           </button>
         </div>
       </div>
+    </li>
+  </template>
 
-      <!-- Add Item Form -->
-      <form id="add-item-form" class="flex items-center mb-8 space-x-2 sm:space-x-3">
-        <div class="relative flex-grow">
-          <input type="text" id="new-item-input" required
-            class="block w-full flat-input rounded-xl sm:text-lg px-4 py-3 sm:py-4 outline-none placeholder-[#14B8A6] dark:placeholder-[#5eead4]/60"
-            placeholder="Add an item...">
-        </div>
-        <button type="button" id="scan-btn" aria-label="Scan Barcode" title="Scan Barcode"
-          class="flex-shrink-0 btn-secondary p-3 sm:p-4">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z">
-            </path>
-          </svg>
-        </button>
-        <button type="submit" aria-label="Add Item" class="flex-shrink-0 btn-cta p-3 sm:p-4">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6">
-            </path>
-          </svg>
-        </button>
-      </form>
-
-      <!-- Scanner Container (Hidden by default) -->
-      <div id="scanner-container"
-        class="hidden mb-8 flat-card overflow-hidden relative aspect-square w-full max-w-sm mx-auto animate-slide-up bg-black dark:bg-black">
-        <div id="reader" width="100%"></div>
-        <button id="close-scanner-btn"
-          class="absolute top-4 right-4 bg-white/20 p-2.5 rounded-full text-white hover:bg-white/40 border border-white/30 transition-colors z-20">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-        <p id="scanner-status"
-          class="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm font-bold bg-[#0D9488] px-4 py-2 rounded-xl z-20 shadow-lg">
-          Scanning...</p>
-      </div>
-
-      <!-- List -->
-      <ul id="shopping-list" class="space-y-3 pb-8">
-        <!-- Items populated dynamically -->
-        <li class="p-6 text-center text-[#14B8A6] font-medium italic animate-pulse">Loading items...</li>
-      </ul>
-
-    </section>
-
-    <!-- Manage Family Modal (Hidden by default) -->
-    <div id="manage-modal"
-      class="fixed inset-0 bg-[#0f766e]/60 hidden z-50 flex items-center justify-center p-4 transition-opacity">
-      <div class="flat-card max-w-md w-full p-8 relative animate-slide-up shadow-2xl">
-        <button id="close-modal-btn"
-          class="absolute top-6 right-6 p-2 rounded-full hover:bg-[#d1fae5] dark:hover:bg-[#0f766e] text-[#134E4A] dark:text-[#ccfbf1] transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-
-        <h2 class="text-2xl font-heading font-bold mb-6" id="modal-family-name">Manage Family</h2>
-
-        <div id="owner-actions" class="hidden">
-          <h3 class="text-xs font-bold text-[#F97316] uppercase tracking-widest mb-3">Invite Member</h3>
-          <form id="invite-form" class="flex space-x-2 mb-6">
-            <input type="email" id="invite-email" required
-              class="flex-grow rounded-xl flat-input px-4 py-2 text-sm outline-none" placeholder="Email address">
-            <button type="submit" class="btn-cta px-5 py-2.5 text-sm">Invite</button>
-          </form>
-          <p id="invite-msg" class="text-sm mt-1 mb-6 hidden font-medium"></p>
-        </div>
-
-        <h3 class="text-xs font-bold text-[#14B8A6] uppercase tracking-widest mb-3">Members</h3>
-        <ul id="members-list"
-          class="divide-y divide-[#d1fae5] dark:divide-[#0f766e] max-h-48 overflow-y-auto pr-2 no-scrollbar">
-          <!-- Members listed here -->
-        </ul>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Template for list item -->
-  <template id="item-template">
-    <li class="item-row flat-card p-4 flex items-center justify-between group mb-3 animate-slide-up">
-      <div class="flex items-center space-x-4 overflow-hidden">
-        <input type="checkbox"
-          class="item-checkbox checkbox-pop h-6 w-6 text-[#0D9488] focus:ring-[#0D9488] border-[#99f6e4] dark:border-[#0f766e] bg-[#f0fdfa] dark:bg-[#115e59] rounded-lg cursor-pointer transition-colors accent-[#0D9488]">
+  <!-- Template for Shopping Mode Item -->
+  <template id="shopping-item-template">
+    <li
+      class="item-row flex items-center gap-4 p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm active:scale-[0.98] transition-transform cursor-pointer">
+      <input type="checkbox"
+        class="item-checkbox checkbox-custom h-7 w-7 rounded-lg border-2 border-primary/30 bg-transparent text-primary focus:ring-primary focus:ring-offset-0 checked:bg-primary checked:border-primary cursor-pointer transition-colors" />
+      <div class="flex flex-col overflow-hidden w-full">
         <span
-          class="item-name font-semibold text-lg sm:text-xl select-none truncate transition-colors duration-200"></span>
+          class="item-name text-base font-semibold truncate transition-all duration-300 text-slate-900 dark:text-slate-100"></span>
       </div>
-      <button
-        class="item-delete text-[#14B8A6] hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-xl opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 transition-all focus:opacity-100">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-          </path>
-        </svg>
-      </button>
     </li>
   </template>
 

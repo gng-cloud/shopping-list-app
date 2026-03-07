@@ -13,7 +13,7 @@ let currentFamilies = []
 let activeFamilyId = null
 let html5QrCode = null
 
-// Éléments DOM
+// Éléments DOM Auth
 const authSection = document.getElementById('auth-section')
 const mainSection = document.getElementById('main-section')
 const authForm = document.getElementById('auth-form')
@@ -24,27 +24,54 @@ const signupBtn = document.getElementById('signup-btn')
 const authError = document.getElementById('auth-error')
 const logoutBtn = document.getElementById('logout-btn')
 
-const familySelect = document.getElementById('family-select')
-const manageFamilyBtn = document.getElementById('manage-family-btn')
+// Éléments DOM Vues et Navigation
+const viewList = document.getElementById('view-list')
+const viewShopping = document.getElementById('view-shopping')
+const viewProfile = document.getElementById('view-profile')
 
+const navList = document.getElementById('nav-list')
+const navShopping = document.getElementById('nav-shopping')
+const navProfile = document.getElementById('nav-profile')
+
+const views = [
+  { view: viewList, nav: navList },
+  { view: viewShopping, nav: navShopping },
+  { view: viewProfile, nav: navProfile }
+]
+
+// Éléments Liste de Courses (Vue 1)
+const familySelect = document.getElementById('family-select')
 const addItemForm = document.getElementById('add-item-form')
 const newItemInput = document.getElementById('new-item-input')
 const shoppingList = document.getElementById('shopping-list')
 const itemTemplate = document.getElementById('item-template')
+const listCount = document.getElementById('list-count')
 
-const manageModal = document.getElementById('manage-modal')
-const closeModalBtn = document.getElementById('close-modal-btn')
-const modalFamilyName = document.getElementById('modal-family-name')
+// Éléments Scanner
+const scanBtn = document.getElementById('scan-btn')
+const scannerContainer = document.getElementById('scanner-container')
+const closeScannerBtn = document.getElementById('close-scanner-btn')
+const scannerStatus = document.getElementById('scanner-status')
+
+const qrConfig = { fps: 10, qrbox: { width: 250, height: 150 } }
+
+// Éléments Mode Courses (Vue 2)
+const shoppingModeList = document.getElementById('shopping-mode-list')
+const shoppingItemTemplate = document.getElementById('shopping-item-template')
+const shoppingProgressText = document.getElementById('shopping-progress-text')
+const shoppingCountText = document.getElementById('shopping-count-text')
+const shoppingProgressBar = document.getElementById('shopping-progress-bar')
+
+// Éléments Profil & Famille (Vue 3)
+const profileEmail = document.getElementById('profile-email')
+const familyMemberCount = document.getElementById('family-member-count')
+const modalFamilyName = document.getElementById('modal-family-name-text')
 const ownerActions = document.getElementById('owner-actions')
 const inviteForm = document.getElementById('invite-form')
 const inviteEmail = document.getElementById('invite-email')
 const inviteMsg = document.getElementById('invite-msg')
 const membersList = document.getElementById('members-list')
 
-const scanBtn = document.getElementById('scan-btn')
-const scannerContainer = document.getElementById('scanner-container')
-const closeScannerBtn = document.getElementById('close-scanner-btn')
-const scannerStatus = document.getElementById('scanner-status')
 
 // --- Initialisation ---
 
@@ -59,6 +86,27 @@ async function init() {
   setupEventListeners()
 }
 
+// --- Navigation entre les vues ---
+function switchView(targetViewId) {
+  views.forEach(({ view, nav }) => {
+    if (view.id === targetViewId) {
+      view.classList.remove('hidden')
+      view.classList.add('flex')
+      nav.classList.add('text-primary')
+      nav.classList.remove('text-slate-400', 'dark:text-slate-600')
+      // Fill the icon
+      nav.querySelector('span').classList.add('fill-current')
+    } else {
+      view.classList.add('hidden')
+      view.classList.remove('flex')
+      nav.classList.remove('text-primary')
+      nav.classList.add('text-slate-400', 'dark:text-slate-600')
+      nav.querySelector('span').classList.remove('fill-current')
+    }
+  })
+}
+
+
 // --- Authentification ---
 
 function handleAuthStateChange(session) {
@@ -67,10 +115,14 @@ function handleAuthStateChange(session) {
   if (currentUser) {
     authSection.classList.add('hidden')
     mainSection.classList.remove('hidden')
+    profileEmail.textContent = currentUser.email
+    switchView('view-list') // Vue par défaut
     loadFamilies()
   } else {
     authSection.classList.remove('hidden')
     mainSection.classList.add('hidden')
+    // S'assurer de cacher les vues principales
+    views.forEach(({ view }) => view.classList.add('hidden'))
   }
 }
 
@@ -101,7 +153,7 @@ async function handleSignup() {
     authError.textContent = error.message
     authError.classList.remove('hidden')
   } else {
-    alert('Check your email for the login link or log in directly if email verification is disabled.')
+    alert('Vérifiez votre email si nécessaire, ou connectez-vous directement !')
   }
 }
 
@@ -112,7 +164,6 @@ async function handleLogout() {
 // --- Familles ---
 
 async function loadFamilies() {
-  // Récupérer les familles dont l'utilisateur est membre
   const { data, error } = await supabase
     .from('families')
     .select('*, family_members!inner(role)')
@@ -124,13 +175,11 @@ async function loadFamilies() {
 
   currentFamilies = data || []
 
-  // Si le trigger n'a pas encore eu le temps de créer la famille après l'inscription, on réessaie dans 1s
   if (currentFamilies.length === 0) {
     setTimeout(loadFamilies, 1000)
     return
   }
 
-  // Mettre à jour le selecteur
   familySelect.innerHTML = currentFamilies.map(f =>
     `<option value="${f.id}">${f.name}</option>`
   ).join('')
@@ -139,21 +188,24 @@ async function loadFamilies() {
     activeFamilyId = currentFamilies[0].id
     familySelect.value = activeFamilyId
     loadShoppingItems()
+    updateProfileFamilyView()
   }
 }
 
 familySelect.addEventListener('change', (e) => {
   activeFamilyId = e.target.value
   loadShoppingItems()
+  updateProfileFamilyView()
 })
 
-// --- Gestion des membres (Modal) ---
 
-manageFamilyBtn.addEventListener('click', async () => {
-  if (!activeFamilyId) return
+// --- Profil & Gestion Famille (Vue 3) ---
 
+async function updateProfileFamilyView() {
   const activeFamily = currentFamilies.find(f => f.id === activeFamilyId)
-  modalFamilyName.textContent = `👪 ${activeFamily.name}`
+  if (!activeFamily) return
+
+  modalFamilyName.textContent = activeFamily.name
 
   // Vérifier si l'utilisateur est propriétaire
   const role = activeFamily.family_members[0].role
@@ -163,19 +215,11 @@ manageFamilyBtn.addEventListener('click', async () => {
     ownerActions.classList.add('hidden')
   }
 
-  // Charger les membres
   inviteMsg.classList.add('hidden')
   await loadFamilyMembers()
-
-  manageModal.classList.remove('hidden')
-})
-
-closeModalBtn.addEventListener('click', () => {
-  manageModal.classList.add('hidden')
-})
+}
 
 async function loadFamilyMembers() {
-  // On trouve d'abord les family_members actuels
   const { data, error } = await supabase
     .from('family_members')
     .select('user_id, role')
@@ -186,15 +230,23 @@ async function loadFamilyMembers() {
     return
   }
 
-  // Pour l'affichage MVP, on affiche juste l'ID ou 'Toi'
-  membersList.innerHTML = data.map(m => `
-    <li class="py-3 flex justify-between items-center group">
-      <span class="text-sm font-semibold text-[#134E4A] dark:text-[#ccfbf1]">${m.user_id === currentUser.id ? 'Vous' : 'Membre (' + m.user_id.substring(0, 6) + '...)'}</span>
-      <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full ${m.role === 'owner' ? 'bg-[#0D9488] text-white' : 'bg-[#ccfbf1] text-[#0D9488] dark:bg-[#0f766e] dark:text-[#ccfbf1]'}">
-        ${m.role}
-      </span>
-    </li>
-  `).join('')
+  familyMemberCount.textContent = `${data.length} Membre${data.length > 1 ? 's' : ''}`
+
+  membersList.innerHTML = data.map(m => {
+    const isMe = m.user_id === currentUser.id
+    const displayName = isMe ? 'Vous' : 'Membre (' + m.user_id.substring(0, 6) + '...)'
+    const avatar = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBlRNUWArXF3aibHSDkdlM4k_NA8ruaGZ5eWwCeYhRdO1Q7hXPN7HSGByo4meLJdtlZ6RMvny5_b-TdJXnuM23F8OEQqqNrphw302FXyo_6e56pRT4Eg4S4JXDDAg7bGDXsy2vjIPz_cNk5sApr_46KZAagDFa4fmI6UEoAb_tx-7DUG2urCUqQG6Zl86t5qFCdeue4fRA8BbeT1v15Tzni8W94EhfUiRyzl4ErlHGxApSdL8x37U1BPRy9hMYYJ3t6b1fLpzxjUS8'
+
+    return `
+      <li class="flex items-center gap-4 p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+        <img alt="Membre" class="w-10 h-10 rounded-full object-cover" src="${isMe ? 'https://lh3.googleusercontent.com/aida-public/AB6AXuDlHpcljmtsN_fW-1my03yBu9MzDR-J8LVpSoBRx9ufvZ8lzJ4Ahru48elZ0-Q85oZStJpxwev2_JmgK5DBgusBdoE_l-mNaWT_vcQGrZeoS6rqIk6UUAbA-ZYa7LjBZZiOke-vLLDg9BG6fdm6xrmooZzgAPegLmQ4iWTSwca3GuwgDQVh1XhHiz9vjPj17zTS5LJnZZqozoyxsYAggZ3k54U1szQA6t75w7ptlmDEOqvvtcYQR-QG9YPZk0HS-y1pXm5b-VSPoz4' : avatar}"/>
+        <div class="flex-1">
+          <p class="font-semibold text-slate-900 dark:text-slate-100">${displayName}</p>
+          <p class="text-xs text-slate-500">${m.role === 'owner' ? 'Propriétaire' : 'Membre'}</p>
+        </div>
+      </li>
+    `
+  }).join('')
 }
 
 inviteForm.addEventListener('submit', async (e) => {
@@ -202,7 +254,7 @@ inviteForm.addEventListener('submit', async (e) => {
   const email = inviteEmail.value
   inviteMsg.classList.remove('hidden')
   inviteMsg.textContent = 'Invitation en cours...'
-  inviteMsg.className = 'text-sm mt-1 mb-4 text-blue-500'
+  inviteMsg.className = 'text-xs mt-2 text-primary'
 
   const { data, error } = await supabase.rpc('add_member_by_email', {
     p_email: email,
@@ -210,23 +262,25 @@ inviteForm.addEventListener('submit', async (e) => {
   })
 
   if (error) {
-    inviteMsg.textContent = 'Erreur : Utilisateur introuvable ou vous n\'avez pas les droits.'
-    inviteMsg.className = 'text-sm mt-1 mb-4 text-red-500'
+    inviteMsg.textContent = 'Erreur : Utilisateur introuvable ou droits insuffisants.'
+    inviteMsg.className = 'text-xs mt-2 text-red-500'
   } else {
     inviteMsg.textContent = 'Membre ajouté avec succès !'
-    inviteMsg.className = 'text-sm mt-1 mb-4 text-green-500'
+    inviteMsg.className = 'text-xs mt-2 text-primary font-bold'
     inviteEmail.value = ''
     loadFamilyMembers()
   }
 })
 
 
-// --- Liste de courses ---
+// --- Liste de courses (Vue 1 & Vue 2) ---
 
 async function loadShoppingItems() {
   if (!activeFamilyId) return
 
-  shoppingList.innerHTML = '<li class="p-6 text-center text-[#14B8A6] font-medium italic animate-pulse">Chargement des articles...</li>'
+  const loadingHtml = '<li class="p-6 text-center text-slate-400 font-medium italic animate-pulse">Chargement des articles...</li>'
+  shoppingList.innerHTML = loadingHtml
+  shoppingModeList.innerHTML = loadingHtml
 
   const { data, error } = await supabase
     .from('shopping_items')
@@ -239,36 +293,79 @@ async function loadShoppingItems() {
     return
   }
 
-  renderShoppingList(data)
+  renderLists(data)
 }
 
-function renderShoppingList(items) {
+function renderLists(items) {
   shoppingList.innerHTML = ''
+  shoppingModeList.innerHTML = ''
+
+  listCount.textContent = `${items.length} article${items.length > 1 ? 's' : ''}`
+
+  const completedItems = items.filter(item => item.is_completed)
+  const totalItems = items.length
+  const progressPercent = totalItems === 0 ? 0 : Math.round((completedItems.length / totalItems) * 100)
+
+  shoppingProgressText.textContent = `${progressPercent}%`
+  shoppingCountText.textContent = `${completedItems.length} sur ${totalItems} article${totalItems > 1 ? 's' : ''}`
+  shoppingProgressBar.style.width = `${progressPercent}%`
+
 
   if (items.length === 0) {
-    shoppingList.innerHTML = '<li class="p-6 text-center text-[#14B8A6] font-medium italic">Votre liste est vide. Ajoutez quelque chose ! ✨</li>'
+    const emptyHtml = '<li class="p-6 text-center text-slate-400 font-medium italic">Votre liste est vide. Ajoutez quelque chose ! ✨</li>'
+    shoppingList.innerHTML = emptyHtml
+    shoppingModeList.innerHTML = emptyHtml
     return
   }
 
+  // Rendu Vue 1 (Préparation - On affiche tout)
   items.forEach(item => {
     const clone = itemTemplate.content.cloneNode(true)
     const li = clone.querySelector('li')
     const nameSpan = clone.querySelector('.item-name')
-    const checkbox = clone.querySelector('.item-checkbox')
     const deleteBtn = clone.querySelector('.item-delete')
+    const iconContainer = clone.querySelector('.item-icon-container')
+    const iconSpan = clone.querySelector('.item-icon')
+
+    nameSpan.textContent = item.name
+
+    if (item.is_completed) {
+      nameSpan.classList.add('line-through', 'text-slate-400', 'dark:text-slate-500')
+      iconContainer.classList.remove('border-primary/20', 'bg-background-light')
+      iconContainer.classList.add('border-slate-200', 'dark:border-slate-800', 'bg-slate-50', 'dark:bg-slate-900')
+      iconSpan.classList.remove('text-primary')
+      iconSpan.classList.add('text-slate-400')
+    }
+
+    deleteBtn.addEventListener('click', () => deleteItem(item.id))
+    shoppingList.appendChild(li)
+  })
+
+  // Rendu Vue 2 (Mode Courses - Style avec Checkbox)
+  items.forEach(item => {
+    const clone = shoppingItemTemplate.content.cloneNode(true)
+    const li = clone.querySelector('li')
+    const nameSpan = clone.querySelector('.item-name')
+    const checkbox = clone.querySelector('.item-checkbox')
 
     nameSpan.textContent = item.name
     checkbox.checked = item.is_completed
 
     if (item.is_completed) {
-      nameSpan.classList.add('line-through', 'text-[#14B8A6]', 'dark:text-[#5eead4]', 'opacity-50')
-      li.classList.add('opacity-70') // Dim the whole card slightly
+      nameSpan.classList.add('line-through', 'text-slate-400', 'dark:text-slate-500')
     }
 
     checkbox.addEventListener('change', () => toggleItem(item.id, checkbox.checked))
-    deleteBtn.addEventListener('click', () => deleteItem(item.id))
 
-    shoppingList.appendChild(li)
+    // Permet de cliquer sur la ligne entière pour cocher
+    li.addEventListener('click', (e) => {
+      if (e.target !== checkbox) {
+        checkbox.checked = !checkbox.checked
+        toggleItem(item.id, checkbox.checked)
+      }
+    })
+
+    shoppingModeList.appendChild(li)
   })
 }
 
@@ -328,12 +425,10 @@ scanBtn.addEventListener('click', async () => {
     html5QrCode = new Html5Qrcode("reader")
   }
 
-  const config = { fps: 10, qrbox: { width: 250, height: 150 } }
-
   try {
     await html5QrCode.start(
       { facingMode: "environment" },
-      config,
+      qrConfig,
       onScanSuccess,
       onScanFailure
     )
@@ -353,13 +448,15 @@ async function stopScanner() {
 }
 
 function onScanFailure(error) {
-  // Ignore les erreurs de scan continues (pas de code dans le champ de vision)
+  // Silent ignore
 }
 
-async function onScanSuccess(decodedText, decodedResult) {
-  // On arrête le scanner une fois le code trouvé
+async function onScanSuccess(decodedText) {
   await stopScanner()
   scannerStatus.textContent = "Recherche du produit..."
+
+  // Show scanner container briefly with new status
+  scannerContainer.classList.remove('hidden')
 
   try {
     const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${decodedText}.json`)
@@ -367,23 +464,23 @@ async function onScanSuccess(decodedText, decodedResult) {
 
     if (data.status === 1 && data.product && data.product.product_name) {
       const productName = data.product.product_name
-      // Si la marque est dispo, on l'ajoute
       const fullName = data.product.brands ? `${data.product.brands} - ${productName}` : productName
       await insertItem(fullName)
     } else {
       alert(`Produit non trouvé pour le code barre: ${decodedText}`)
-      newItemInput.value = decodedText // On met le code barre dans le champ texte au cas où
+      newItemInput.value = decodedText
     }
   } catch (err) {
     console.error("OpenFoodFacts error", err)
     alert("Erreur réseau lors de la recherche du produit.")
   } finally {
     scannerStatus.textContent = "Scanning..."
+    scannerContainer.classList.add('hidden')
   }
 }
 
 
-// --- Écouteurs ---
+// --- Écouteurs globaux ---
 
 function setupEventListeners() {
   loginBtn.addEventListener('click', handleLogin)
@@ -392,6 +489,10 @@ function setupEventListeners() {
     handleSignup()
   })
   logoutBtn.addEventListener('click', handleLogout)
+
+  navList.addEventListener('click', () => switchView('view-list'))
+  navShopping.addEventListener('click', () => switchView('view-shopping'))
+  navProfile.addEventListener('click', () => switchView('view-profile'))
 }
 
 // Lancer l'app
