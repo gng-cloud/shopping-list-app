@@ -71,6 +71,9 @@ const inviteForm = document.getElementById('invite-form')
 const inviteEmail = document.getElementById('invite-email')
 const inviteMsg = document.getElementById('invite-msg')
 const membersList = document.getElementById('members-list')
+const createFamilyForm = document.getElementById('create-family-form')
+const newFamilyName = document.getElementById('new-family-name')
+const createFamilyMsg = document.getElementById('create-family-msg')
 
 
 // --- Initialisation ---
@@ -208,6 +211,50 @@ familySelect.addEventListener('change', (e) => {
   loadShoppingItems()
   updateProfileFamilyView()
 })
+
+async function handleCreateFamily(e) {
+  e.preventDefault()
+  const name = newFamilyName.value.trim()
+  if (!name || !currentUser) return
+
+  createFamilyMsg.classList.remove('hidden')
+  createFamilyMsg.textContent = 'Création en cours...'
+  createFamilyMsg.className = 'text-xs mt-2 text-primary'
+
+  try {
+    // 1. Créer la famille
+    const { data: family, error: familyError } = await supabase
+      .from('families')
+      .insert([{ name }])
+      .select()
+      .single()
+
+    if (familyError) throw familyError
+
+    // 2. Ajouter le créateur comme propriétaire
+    const { error: memberError } = await supabase
+      .from('family_members')
+      .insert([{
+        family_id: family.id,
+        user_id: currentUser.id,
+        role: 'owner'
+      }])
+
+    if (memberError) throw memberError
+
+    createFamilyMsg.textContent = 'Famille créée avec succès !'
+    createFamilyMsg.className = 'text-xs mt-2 text-primary font-bold'
+    newFamilyName.value = ''
+
+    // 3. Recharger
+    loadFamilies()
+
+  } catch (err) {
+    console.error('Erreur creation famille', err)
+    createFamilyMsg.textContent = 'Erreur lors de la création.'
+    createFamilyMsg.className = 'text-xs mt-2 text-red-500'
+  }
+}
 
 
 // --- Profil & Gestion Famille (Vue 3) ---
@@ -508,6 +555,7 @@ function setupEventListeners() {
   navList.addEventListener('click', () => switchView('view-list'))
   navShopping.addEventListener('click', () => switchView('view-shopping'))
   navProfile.addEventListener('click', () => switchView('view-profile'))
+  createFamilyForm.addEventListener('submit', handleCreateFamily)
 }
 
 // Lancer l'app
