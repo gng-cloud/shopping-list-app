@@ -163,6 +163,9 @@ async function handleLogout() {
 
 // --- Familles ---
 
+let retries = 0
+const maxRetries = 5
+
 async function loadFamilies() {
   const { data, error } = await supabase
     .from('families')
@@ -170,13 +173,21 @@ async function loadFamilies() {
 
   if (error) {
     console.error('Erreur lors du chargement des familles', error)
+    shoppingList.innerHTML = '<li class="p-6 text-center text-red-500 font-medium">Erreur de connexion. Réessayez plus tard.</li>'
     return
   }
 
   currentFamilies = data || []
 
   if (currentFamilies.length === 0) {
-    setTimeout(loadFamilies, 1000)
+    if (retries < maxRetries) {
+      retries++
+      console.log(`Aucune famille trouvée, tentative ${retries}/${maxRetries}...`)
+      setTimeout(loadFamilies, 2000)
+    } else {
+      shoppingList.innerHTML = '<li class="p-6 text-center text-slate-400 font-medium italic">Aucune famille trouvée. Créez-en une sur Supabase !</li>'
+      shoppingModeList.innerHTML = shoppingList.innerHTML
+    }
     return
   }
 
@@ -276,7 +287,11 @@ inviteForm.addEventListener('submit', async (e) => {
 // --- Liste de courses (Vue 1 & Vue 2) ---
 
 async function loadShoppingItems() {
-  if (!activeFamilyId) return
+  if (!activeFamilyId) {
+    shoppingList.innerHTML = '<li class="p-6 text-center text-slate-400 font-medium italic">Sélectionnez une famille pour voir les articles.</li>'
+    shoppingModeList.innerHTML = shoppingList.innerHTML
+    return
+  }
 
   const loadingHtml = '<li class="p-6 text-center text-slate-400 font-medium italic animate-pulse">Chargement des articles...</li>'
   shoppingList.innerHTML = loadingHtml
