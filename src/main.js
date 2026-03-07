@@ -222,25 +222,12 @@ async function handleCreateFamily(e) {
   createFamilyMsg.className = 'text-xs mt-2 text-primary'
 
   try {
-    // 1. Créer la famille
-    const { data: family, error: familyError } = await supabase
-      .from('families')
-      .insert([{ name }])
-      .select()
-      .single()
+    // Utiliser le RPC pour une création atomique (évite les problèmes de RLS sur le SELECT immédiat)
+    const { data: familyId, error } = await supabase.rpc('create_family_with_owner', {
+      p_name: name
+    })
 
-    if (familyError) throw familyError
-
-    // 2. Ajouter le créateur comme propriétaire
-    const { error: memberError } = await supabase
-      .from('family_members')
-      .insert([{
-        family_id: family.id,
-        user_id: currentUser.id,
-        role: 'owner'
-      }])
-
-    if (memberError) throw memberError
+    if (error) throw error
 
     createFamilyMsg.textContent = 'Famille créée avec succès !'
     createFamilyMsg.className = 'text-xs mt-2 text-primary font-bold'
