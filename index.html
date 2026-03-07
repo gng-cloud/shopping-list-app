@@ -1,130 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Family Shopping List</title>
-    <link href="./src/style.css" rel="stylesheet">
-  </head>
-  <body class="bg-gray-50 text-gray-900 font-sans antialiased min-h-screen">
-    <div id="app" class="max-w-md mx-auto p-4 sm:p-6 pb-24">
-      
-      <!-- AUTH SECTION -->
-      <section id="auth-section" class="mt-12 bg-white p-8 rounded-2xl shadow-xl hidden">
-        <h1 class="text-3xl font-bold text-center mb-2 text-indigo-600">Family Cart</h1>
-        <p class="text-center text-gray-500 mb-8">Sign in to manage your shopping lists</p>
-        
-        <form id="auth-form" class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Email</label>
-            <input type="email" id="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-3 border" placeholder="you@example.com">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Password</label>
-            <input type="password" id="password" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-3 border" placeholder="••••••••">
-          </div>
-          <div id="auth-error" class="text-red-500 text-sm hidden"></div>
-          <button type="submit" id="login-btn" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-            Sign In
-          </button>
-          <button type="button" id="signup-btn" class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-            Create Account
-          </button>
-        </form>
-      </section>
 
-      <!-- MAIN APP SECTION -->
-      <section id="main-section" class="hidden">
-        
-        <!-- Header -->
-        <header class="flex justify-between items-center mb-8">
-          <h1 class="text-2xl font-bold tracking-tight text-gray-900">Shopping List</h1>
-          <button id="logout-btn" class="text-sm font-medium text-gray-500 hover:text-gray-700">Log out</button>
-        </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Family Shopping List</title>
+  <link href="./src/style.css" rel="stylesheet">
+</head>
 
-        <!-- Family Info & active selector -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Current Family</p>
-              <select id="family-select" class="mt-1 block w-full py-2 pl-3 pr-10 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md font-medium text-gray-900 border">
-                <!-- Options populated dynamically -->
-              </select>
-            </div>
-            <button id="manage-family-btn" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium p-2">Manage</button>
-          </div>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased min-h-screen">
+  <div id="app" class="max-w-md mx-auto p-4 sm:p-6 pb-24">
+
+    <!-- AUTH SECTION -->
+    <section id="auth-section" class="mt-12 bg-white p-8 rounded-2xl shadow-xl hidden">
+      <h1 class="text-3xl font-bold text-center mb-2 text-indigo-600">Family Cart</h1>
+      <p class="text-center text-gray-500 mb-8">Sign in to manage your shopping lists</p>
+
+      <form id="auth-form" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Email</label>
+          <input type="email" id="email" required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-3 border"
+            placeholder="you@example.com">
         </div>
-
-        <!-- Add Item Form -->
-        <form id="add-item-form" class="flex items-center mb-6 space-x-2">
-          <div class="relative flex-grow">
-            <input type="text" id="new-item-input" required class="block w-full border-gray-300 rounded-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm px-5 py-3 border" placeholder="Add an item...">
-          </div>
-          <button type="button" id="scan-btn" class="inline-flex items-center p-3 border border-transparent rounded-full shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
-          </button>
-          <button type="submit" class="inline-flex items-center p-3 border border-transparent rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-          </button>
-        </form>
-
-        <!-- Scanner Container (Hidden by default) -->
-        <div id="scanner-container" class="hidden mb-6 bg-black rounded-2xl overflow-hidden shadow-lg relative aspect-square w-full max-w-sm mx-auto">
-           <div id="reader" width="100%"></div>
-           <button id="close-scanner-btn" class="absolute top-2 right-2 bg-white/20 backdrop-blur-md p-2 rounded-full text-white hover:bg-white/40">
-             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-           </button>
-           <p id="scanner-status" class="absolute bottom-2 left-0 right-0 text-center text-white text-sm bg-black/50 py-1">Scanning...</p>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Password</label>
+          <input type="password" id="password" required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-3 border"
+            placeholder="••••••••">
         </div>
+        <div id="auth-error" class="text-red-500 text-sm hidden"></div>
+        <button type="submit" id="login-btn"
+          class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+          Sign In
+        </button>
+        <button type="button" id="signup-btn"
+          class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+          Create Account
+        </button>
+      </form>
+    </section>
 
-        <!-- List -->
-        <ul id="shopping-list" class="space-y-3">
-          <!-- Items populated dynamically -->
-          <li class="p-4 flex items-center justify-center text-gray-400 italic text-sm">Loading items...</li>
-        </ul>
+    <!-- MAIN APP SECTION -->
+    <section id="main-section" class="hidden">
 
-      </section>
+      <!-- Header -->
+      <header class="flex justify-between items-center mb-8">
+        <h1 class="text-2xl font-bold tracking-tight text-gray-900">Shopping List</h1>
+        <button id="logout-btn" class="text-sm font-medium text-gray-500 hover:text-gray-700">Log out</button>
+      </header>
 
-      <!-- Manage Family Modal (Hidden by default) -->
-      <div id="manage-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 relative">
-          <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-          </button>
-          
-          <h2 class="text-xl font-bold text-gray-900 mb-6" id="modal-family-name">Manage Family</h2>
-          
-          <div id="owner-actions" class="hidden">
-            <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Invite Member</h3>
-            <form id="invite-form" class="flex space-x-2 mb-6">
-              <input type="email" id="invite-email" required class="flex-grow rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border px-3 py-2" placeholder="Email address">
-              <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">Invite</button>
-            </form>
-            <p id="invite-msg" class="text-sm mt-1 mb-4 hidden"></p>
+      <!-- Family Info & active selector -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Current Family</p>
+            <select id="family-select"
+              class="mt-1 block w-full py-2 pl-3 pr-10 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md font-medium text-gray-900 border">
+              <!-- Options populated dynamically -->
+            </select>
           </div>
-
-          <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Members</h3>
-          <ul id="members-list" class="divide-y divide-gray-200">
-            <!-- Members listed here -->
-          </ul>
+          <button id="manage-family-btn"
+            class="text-indigo-600 hover:text-indigo-800 text-sm font-medium p-2">Manage</button>
         </div>
       </div>
 
+      <!-- Add Item Form -->
+      <form id="add-item-form" class="flex items-center mb-6 space-x-2">
+        <div class="relative flex-grow">
+          <input type="text" id="new-item-input" required
+            class="block w-full border-gray-300 rounded-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm px-5 py-3 border"
+            placeholder="Add an item...">
+        </div>
+        <button type="button" id="scan-btn" aria-label="Scan Barcode" title="Scan Barcode"
+          class="inline-flex items-center p-3 border border-transparent rounded-full shadow-sm text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z">
+            </path>
+          </svg>
+        </button>
+        <button type="submit" aria-label="Add Item"
+          class="inline-flex items-center p-3 border border-transparent rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+        </button>
+      </form>
+
+      <!-- Scanner Container (Hidden by default) -->
+      <div id="scanner-container"
+        class="hidden mb-6 bg-black rounded-2xl overflow-hidden shadow-lg relative aspect-square w-full max-w-sm mx-auto">
+        <div id="reader" width="100%"></div>
+        <button id="close-scanner-btn"
+          class="absolute top-2 right-2 bg-white/20 backdrop-blur-md p-2 rounded-full text-white hover:bg-white/40">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+        <p id="scanner-status" class="absolute bottom-2 left-0 right-0 text-center text-white text-sm bg-black/50 py-1">
+          Scanning...</p>
+      </div>
+
+      <!-- List -->
+      <ul id="shopping-list" class="space-y-3">
+        <!-- Items populated dynamically -->
+        <li class="p-4 flex items-center justify-center text-gray-400 italic text-sm">Loading items...</li>
+      </ul>
+
+    </section>
+
+    <!-- Manage Family Modal (Hidden by default) -->
+    <div id="manage-modal"
+      class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 relative">
+        <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+
+        <h2 class="text-xl font-bold text-gray-900 mb-6" id="modal-family-name">Manage Family</h2>
+
+        <div id="owner-actions" class="hidden">
+          <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Invite Member</h3>
+          <form id="invite-form" class="flex space-x-2 mb-6">
+            <input type="email" id="invite-email" required
+              class="flex-grow rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border px-3 py-2"
+              placeholder="Email address">
+            <button type="submit"
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">Invite</button>
+          </form>
+          <p id="invite-msg" class="text-sm mt-1 mb-4 hidden"></p>
+        </div>
+
+        <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Members</h3>
+        <ul id="members-list" class="divide-y divide-gray-200">
+          <!-- Members listed here -->
+        </ul>
+      </div>
     </div>
 
-    <!-- Template for list item -->
-    <template id="item-template">
-      <li class="item-row bg-white rounded-xl shadow-sm border border-gray-100 p-4 transition-all duration-200 flex items-center justify-between group">
-        <div class="flex items-center space-x-4">
-          <input type="checkbox" class="item-checkbox h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded cursor-pointer transition-colors">
-          <span class="item-name text-gray-900 font-medium text-lg select-none"></span>
-        </div>
-        <button class="item-delete text-gray-400 hover:text-red-500 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-        </button>
-      </li>
-    </template>
+  </div>
 
-    <script type="module" src="./src/main.js"></script>
-  </body>
+  <!-- Template for list item -->
+  <template id="item-template">
+    <li
+      class="item-row bg-white rounded-xl shadow-sm border border-gray-100 p-4 transition-all duration-200 flex items-center justify-between group">
+      <div class="flex items-center space-x-4">
+        <input type="checkbox"
+          class="item-checkbox h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded cursor-pointer transition-colors">
+        <span class="item-name text-gray-900 font-medium text-lg select-none"></span>
+      </div>
+      <button
+        class="item-delete text-gray-400 hover:text-red-500 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+          </path>
+        </svg>
+      </button>
+    </li>
+  </template>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+
 </html>
