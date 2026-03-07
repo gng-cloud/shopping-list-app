@@ -50,7 +50,7 @@ const scannerStatus = document.getElementById('scanner-status')
 
 async function init() {
   const { data: { session } } = await supabase.auth.getSession()
-  
+
   supabase.auth.onAuthStateChange((_event, session) => {
     handleAuthStateChange(session)
   })
@@ -63,7 +63,7 @@ async function init() {
 
 function handleAuthStateChange(session) {
   currentUser = session?.user || null
-  
+
   if (currentUser) {
     authSection.classList.add('hidden')
     mainSection.classList.remove('hidden')
@@ -77,7 +77,7 @@ function handleAuthStateChange(session) {
 async function handleLogin(e) {
   e.preventDefault()
   authError.classList.add('hidden')
-  
+
   const { error } = await supabase.auth.signInWithPassword({
     email: emailInput.value,
     password: passwordInput.value,
@@ -91,7 +91,7 @@ async function handleLogin(e) {
 
 async function handleSignup() {
   authError.classList.add('hidden')
-  
+
   const { error } = await supabase.auth.signUp({
     email: emailInput.value,
     password: passwordInput.value,
@@ -116,14 +116,14 @@ async function loadFamilies() {
   const { data, error } = await supabase
     .from('families')
     .select('*, family_members!inner(role)')
-    
+
   if (error) {
     console.error('Erreur lors du chargement des familles', error)
     return
   }
 
   currentFamilies = data || []
-  
+
   // Si le trigger n'a pas encore eu le temps de créer la famille après l'inscription, on réessaie dans 1s
   if (currentFamilies.length === 0) {
     setTimeout(loadFamilies, 1000)
@@ -131,7 +131,7 @@ async function loadFamilies() {
   }
 
   // Mettre à jour le selecteur
-  familySelect.innerHTML = currentFamilies.map(f => 
+  familySelect.innerHTML = currentFamilies.map(f =>
     `<option value="${f.id}">${f.name}</option>`
   ).join('')
 
@@ -151,10 +151,10 @@ familySelect.addEventListener('change', (e) => {
 
 manageFamilyBtn.addEventListener('click', async () => {
   if (!activeFamilyId) return
-  
+
   const activeFamily = currentFamilies.find(f => f.id === activeFamilyId)
   modalFamilyName.textContent = `👪 ${activeFamily.name}`
-  
+
   // Vérifier si l'utilisateur est propriétaire
   const role = activeFamily.family_members[0].role
   if (role === 'owner') {
@@ -166,7 +166,7 @@ manageFamilyBtn.addEventListener('click', async () => {
   // Charger les membres
   inviteMsg.classList.add('hidden')
   await loadFamilyMembers()
-  
+
   manageModal.classList.remove('hidden')
 })
 
@@ -185,12 +185,12 @@ async function loadFamilyMembers() {
     console.error('Erreur membres', error)
     return
   }
-  
+
   // Pour l'affichage MVP, on affiche juste l'ID ou 'Toi'
   membersList.innerHTML = data.map(m => `
-    <li class="py-3 flex justify-between items-center">
-      <span class="text-sm font-medium text-gray-900">${m.user_id === currentUser.id ? 'Toi' : 'Membre (ID: ' + m.user_id.substring(0,8) + '...)' }</span>
-      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${m.role === 'owner' ? 'bg-indigo-100 text-indigo-800' : 'bg-green-100 text-green-800'}">
+    <li class="py-3 flex justify-between items-center group">
+      <span class="text-sm font-semibold text-[#134E4A] dark:text-[#ccfbf1]">${m.user_id === currentUser.id ? 'Vous' : 'Membre (' + m.user_id.substring(0, 6) + '...)'}</span>
+      <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full ${m.role === 'owner' ? 'bg-[#0D9488] text-white' : 'bg-[#ccfbf1] text-[#0D9488] dark:bg-[#0f766e] dark:text-[#ccfbf1]'}">
         ${m.role}
       </span>
     </li>
@@ -226,7 +226,7 @@ inviteForm.addEventListener('submit', async (e) => {
 async function loadShoppingItems() {
   if (!activeFamilyId) return
 
-  shoppingList.innerHTML = '<li class="p-4 text-center text-gray-400 italic text-sm animate-pulse">Chargement des articles...</li>'
+  shoppingList.innerHTML = '<li class="p-6 text-center text-[#14B8A6] font-medium italic animate-pulse">Chargement des articles...</li>'
 
   const { data, error } = await supabase
     .from('shopping_items')
@@ -244,9 +244,9 @@ async function loadShoppingItems() {
 
 function renderShoppingList(items) {
   shoppingList.innerHTML = ''
-  
+
   if (items.length === 0) {
-    shoppingList.innerHTML = '<li class="p-4 text-center text-gray-400 italic text-sm">Votre liste est vide pour l\'instant.</li>'
+    shoppingList.innerHTML = '<li class="p-6 text-center text-[#14B8A6] font-medium italic">Votre liste est vide. Ajoutez quelque chose ! ✨</li>'
     return
   }
 
@@ -261,7 +261,8 @@ function renderShoppingList(items) {
     checkbox.checked = item.is_completed
 
     if (item.is_completed) {
-      nameSpan.classList.add('line-through', 'text-gray-400')
+      nameSpan.classList.add('line-through', 'text-[#14B8A6]', 'dark:text-[#5eead4]', 'opacity-50')
+      li.classList.add('opacity-70') // Dim the whole card slightly
     }
 
     checkbox.addEventListener('change', () => toggleItem(item.id, checkbox.checked))
@@ -322,13 +323,13 @@ async function deleteItem(id) {
 
 scanBtn.addEventListener('click', async () => {
   scannerContainer.classList.remove('hidden')
-  
+
   if (!html5QrCode) {
     html5QrCode = new Html5Qrcode("reader")
   }
-  
+
   const config = { fps: 10, qrbox: { width: 250, height: 150 } }
-  
+
   try {
     await html5QrCode.start(
       { facingMode: "environment" },
@@ -359,11 +360,11 @@ async function onScanSuccess(decodedText, decodedResult) {
   // On arrête le scanner une fois le code trouvé
   await stopScanner()
   scannerStatus.textContent = "Recherche du produit..."
-  
+
   try {
     const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${decodedText}.json`)
     const data = await response.json()
-    
+
     if (data.status === 1 && data.product && data.product.product_name) {
       const productName = data.product.product_name
       // Si la marque est dispo, on l'ajoute
