@@ -252,7 +252,15 @@ async function handleAuthSubmit(e) {
   authSubmitBtn.textContent = currentAuthMode === 'login' ? 'Se connecter' : 'S\'inscrire'
 
   if (error) {
-    authError.textContent = error.message
+    let msg = error.message
+    if (msg.includes('Invalid login credentials')) {
+      msg = 'Email ou mot de passe incorrect.'
+    } else if (msg.includes('User already registered')) {
+      msg = 'Cet email est déjà utilisé.'
+    } else if (msg.includes('Password should be')) {
+      msg = 'Le mot de passe doit faire au moins 6 caractères.'
+    }
+    authError.textContent = msg
     authError.classList.remove('hidden')
   } else if (currentAuthMode === 'signup' && data.user && !data.session) {
     // Signup réussi mais confirmation email requise
