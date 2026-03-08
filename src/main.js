@@ -458,6 +458,13 @@ async function loadSuggestions() {
   itemSuggestions.innerHTML = uniqueNames.map(name => `<option value="${name}">`).join('')
 }
 
+function parseQuantity(q) {
+  if (!q) return { val: 1, unit: '', isDefault: true }
+  const match = q.match(/^(\d+(?:\.\d+)?)\s*(.*)$/)
+  if (match) return { val: parseFloat(match[1]), unit: match[2].trim(), isDefault: false }
+  return { val: null, unit: q.trim(), isDefault: false }
+}
+
 async function insertItem(name, quantity = '') {
   console.log(`Insertion: ${name}, Qté: ${quantity}`)
   // Vérifier si un article avec le même nom existe déjà (même archivé)
@@ -469,10 +476,22 @@ async function insertItem(name, quantity = '') {
     .maybeSingle()
 
   if (existing) {
-    // Si il existe, on le réactive simplement et on met à jour la quantité
+    // Calculer la nouvelle quantité par incrémentation
+    const oldQty = parseQuantity(existing.quantity)
+    const newAddQty = parseQuantity(quantity)
+
+    let updatedQty = quantity
+    if (oldQty.val !== null && newAddQty.val !== null) {
+      // Si les unités sont compatibles (identiques ou la nouvelle est vide)
+      if (oldQty.unit === newAddQty.unit || !newAddQty.unit) {
+        const sum = oldQty.val + newAddQty.val
+        updatedQty = oldQty.unit ? `${sum} ${oldQty.unit}` : `${sum}`
+      }
+    }
+
     const { error } = await supabase
       .from('shopping_items')
-      .update({ is_archived: false, is_completed: false, quantity })
+      .update({ is_archived: false, is_completed: false, quantity: updatedQty })
       .eq('id', existing.id)
 
     if (error) console.error('Erreur reactivation', error)
