@@ -17,6 +17,9 @@ let currentAuthMode = 'login' // 'login' ou 'signup'
 // Éléments DOM Auth
 const authSection = document.getElementById('auth-section')
 const mainSection = document.getElementById('main-section')
+const authForm = document.getElementById('auth-form')
+const emailInput = document.getElementById('email')
+const passwordInput = document.getElementById('password')
 const authError = document.getElementById('auth-error')
 const authTitle = document.getElementById('auth-title')
 const authSubtitle = document.getElementById('auth-subtitle')
