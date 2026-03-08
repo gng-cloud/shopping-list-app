@@ -84,6 +84,12 @@ const ownerActions = document.getElementById('owner-actions')
 const inviteForm = document.getElementById('invite-form')
 const inviteEmail = document.getElementById('invite-email')
 const inviteMsg = document.getElementById('invite-msg')
+
+const invitationsSectionList = document.getElementById('invitations-section-list')
+const invitationsListList = document.getElementById('invitations-list-list')
+const invitationsSectionProfile = document.getElementById('invitations-section-profile')
+const invitationsListProfile = document.getElementById('invitations-list-profile')
+
 const profileForm = document.getElementById('profile-form')
 const profileFirstNameInput = document.getElementById('profile-first-name')
 const profileMsg = document.getElementById('profile-msg')
@@ -523,47 +529,59 @@ profileForm.addEventListener('submit', async (e) => {
 
 async function loadInvitations() {
   if (!currentUser) return
-  console.log('Chargement des invitations pour:', currentUser.email)
+  console.log('[DEBUG] Chargement des invitations pour:', currentUser.email, currentUser.id)
 
   const { data, error } = await supabase
     .from('family_members')
-    .select('id, family_id, families(name)')
+    .select('id, family_id, status, families(name)')
     .eq('user_id', currentUser.id)
     .eq('status', 'pending')
 
   if (error) {
-    console.error('Erreur chargement invitations:', error)
-    invitationsSection.classList.add('hidden')
+    console.error('[INVITATIONS] Erreur chargement invitations:', error)
+    if (invitationsSectionList) invitationsSectionList.classList.add('hidden')
+    if (invitationsSectionProfile) invitationsSectionProfile.classList.add('hidden')
     return
   }
 
-  console.log('Invitations trouvées:', data?.length || 0)
+  console.log('[INVITATIONS] Données reçues:', data)
 
   if (!data || data.length === 0) {
-    invitationsSection.classList.add('hidden')
+    console.log('[INVITATIONS] Aucune invitation en attente.')
+    if (invitationsSectionList) invitationsSectionList.classList.add('hidden')
+    if (invitationsSectionProfile) invitationsSectionProfile.classList.add('hidden')
     return
   }
 
-  invitationsSection.classList.remove('hidden')
-  invitationsList.innerHTML = data.map(inv => {
+  const html = data.map(inv => {
     const familyName = inv.families ? inv.families.name : 'Famille inconnue'
+    console.log(`[INVITATIONS] Affichage invitation pour la famille: ${familyName} (${inv.family_id})`)
     return `
-      <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
+      <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl border border-amber-200 dark:border-amber-900/50 shadow-sm">
         <div class="flex flex-col">
-          <span class="text-xs font-semibold text-slate-500 uppercase">Invitation pour</span>
+          <span class="text-[10px] font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest">Invitation</span>
           <span class="text-sm font-bold text-slate-900 dark:text-white">${familyName}</span>
         </div>
         <div class="flex gap-2">
-          <button onclick="handleAcceptInvitation('${inv.id}')" class="bg-primary/10 hover:bg-primary/20 text-primary font-bold px-3 py-2 rounded-xl text-xs transition-all">
+          <button onclick="handleAcceptInvitation('${inv.id}')" class="bg-primary text-background-dark font-bold px-4 py-2 rounded-xl text-xs transition-all active:scale-95">
             Accepter
           </button>
-          <button onclick="handleDeclineInvitation('${inv.id}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 font-bold px-3 py-2 rounded-xl text-xs transition-all">
+          <button onclick="handleDeclineInvitation('${inv.id}')" class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold px-4 py-2 rounded-xl text-xs transition-all active:scale-95">
             Refuser
           </button>
         </div>
       </div>
     `
   }).join('')
+
+  if (invitationsSectionList) {
+    invitationsSectionList.classList.remove('hidden')
+    invitationsListList.innerHTML = html
+  }
+  if (invitationsSectionProfile) {
+    invitationsSectionProfile.classList.remove('hidden')
+    invitationsListProfile.innerHTML = html
+  }
 }
 
 window.handleAcceptInvitation = async (invitationId) => {
