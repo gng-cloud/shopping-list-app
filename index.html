@@ -174,18 +174,18 @@
         </section>
 
         <!-- List Items Section -->
-        <section class="mt-6 px-4">
+        <section class="mt-4 px-4">
           <button id="clear-completed-btn"
             class="w-full py-4 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-800 text-slate-400 font-bold flex items-center justify-center gap-2 hover:border-primary/40 hover:text-primary transition-colors cursor-pointer mb-24">
             <span class="material-symbols-outlined">delete_sweep</span>
             Vider les articles achetés
           </button>
-          <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-between mb-2">
             <h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300">Articles à acheter</h2>
             <span id="list-count" class="text-xs font-medium bg-slate-200 dark:bg-slate-800 px-2 py-1 rounded-full">0
               article</span>
           </div>
-          <ul id="shopping-list" class="space-y-2">
+          <ul id="shopping-list" class="space-y-1">
             <li class="p-6 text-center text-slate-400 font-medium italic animate-pulse">Chargement...</li>
           </ul>
         </section>
@@ -411,11 +411,11 @@
   <template id="item-template">
     <li
       class="item-row flex flex-col bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 group transition-all duration-300">
-      <div class="flex items-center justify-between py-2 px-4">
+      <div class="flex items-center justify-between py-1 px-4">
         <div class="flex items-center gap-3 overflow-hidden flex-1">
           <div
-            class="size-10 shrink-0 rounded-lg bg-background-light dark:bg-background-dark flex items-center justify-center item-icon-container">
-            <span class="material-symbols-outlined text-primary text-xl item-icon">category</span>
+            class="size-8 shrink-0 rounded-lg bg-background-light dark:bg-background-dark flex items-center justify-center item-icon-container">
+            <span class="material-symbols-outlined text-primary text-lg item-icon">category</span>
           </div>
           <div class="flex-1 min-w-0">
             <p class="item-display font-semibold text-slate-800 dark:text-slate-100 truncate"></p>
