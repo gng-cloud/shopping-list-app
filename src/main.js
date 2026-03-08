@@ -832,14 +832,31 @@ function parseQuantity(q) {
 }
 
 async function insertItem(name, quantity = '') {
-  console.log(`Insertion: ${name}, Qté: ${quantity}`)
-  // Vérifier si un article avec le même nom existe déjà (même archivé)
-  const { data: existing } = await supabase
+  const trimmedName = name.trim()
+  console.log(`Insertion: ${trimmedName}, Qté: ${quantity}`)
+
+  // Chercher un article similaire (casse, singulier/pluriel en 's')
+  const searchName = trimmedName.toLowerCase()
+  const singular = searchName.endsWith('s') ? searchName.slice(0, -1) : searchName
+  const plural = searchName + 's'
+
+  const { data: familyItems, error: fetchError } = await supabase
     .from('shopping_items')
     .select('*')
     .eq('family_id', activeFamilyId)
-    .eq('name', name)
-    .maybeSingle()
+
+  if (fetchError) {
+    console.error('Erreur recherche doublons', fetchError)
+  }
+
+  const existing = (familyItems || []).find(it => {
+    const itName = it.name.trim().toLowerCase()
+    return itName === searchName ||
+      itName === singular ||
+      itName === plural ||
+      (itName.endsWith('s') && itName.slice(0, -1) === searchName) ||
+      (searchName.endsWith('s') && searchName.slice(0, -1) === itName)
+  })
 
   if (existing) {
     // Calculer la nouvelle quantité par incrémentation
