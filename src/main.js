@@ -19,6 +19,8 @@ let currentAuthMode = 'login' // 'login' ou 'signup'
 const authSection = document.getElementById('auth-section')
 const mainSection = document.getElementById('main-section')
 const authForm = document.getElementById('auth-form')
+const firstNameContainer = document.getElementById('first-name-container')
+const firstNameInput = document.getElementById('first-name')
 const emailInput = document.getElementById('email')
 const passwordInput = document.getElementById('password')
 const authError = document.getElementById('auth-error')
@@ -169,6 +171,7 @@ async function handleAuthSubmit(e) {
 
   const email = emailInput.value
   const password = passwordInput.value
+  const firstName = firstNameInput.value.trim()
 
   let result
   if (currentAuthMode === 'login') {
@@ -184,7 +187,10 @@ async function handleAuthSubmit(e) {
       password,
       options: {
         emailRedirectTo: redirectTo, // Support pour anciennes versions
-        redirectTo: redirectTo        // Version moderne
+        redirectTo: redirectTo,        // Version moderne
+        data: {
+          first_name: firstName || 'Utilisateur'
+        }
       }
     })
   }
@@ -211,11 +217,15 @@ function toggleAuthMode() {
     authSubtitle.textContent = "Créez votre compte pour commencer"
     authSubmitBtn.textContent = "S'inscrire"
     authToggleBtn.textContent = "Déjà un compte ? Se connecter"
+    firstNameContainer.classList.remove('hidden')
+    firstNameInput.required = true
   } else {
     authTitle.textContent = "Family Cart"
     authSubtitle.textContent = "Gérez vos listes ensemble"
     authSubmitBtn.textContent = "Se connecter"
     authToggleBtn.textContent = "Pas de compte ? Créer un compte"
+    firstNameContainer.classList.add('hidden')
+    firstNameInput.required = false
   }
 
   authError.classList.add('hidden')
@@ -334,7 +344,13 @@ async function updateProfileFamilyView() {
 async function loadFamilyMembers() {
   const { data, error } = await supabase
     .from('family_members')
-    .select('user_id, role')
+    .select(`
+      user_id, 
+      role,
+      profiles (
+        first_name
+      )
+    `)
     .eq('family_id', activeFamilyId)
 
   if (error) {
@@ -346,7 +362,12 @@ async function loadFamilyMembers() {
 
   membersList.innerHTML = data.map(m => {
     const isMe = m.user_id === currentUser.id
-    const displayName = isMe ? 'Vous' : 'Membre (' + m.user_id.substring(0, 6) + '...)'
+    const firstName = m.profiles ? m.profiles.first_name : null
+
+    let displayName = 'Membre (' + m.user_id.substring(0, 6) + '...)'
+    if (isMe) displayName = 'Vous' + (firstName ? ` (${firstName})` : '')
+    else if (firstName) displayName = firstName
+
     const avatar = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBlRNUWArXF3aibHSDkdlM4k_NA8ruaGZ5eWwCeYhRdO1Q7hXPN7HSGByo4meLJdtlZ6RMvny5_b-TdJXnuM23F8OEQqqNrphw302FXyo_6e56pRT4Eg4S4JXDDAg7bGDXsy2vjIPz_cNk5sApr_46KZAagDFa4fmI6UEoAb_tx-7DUG2urCUqQG6Zl86t5qFCdeue4fRA8BbeT1v15Tzni8W94EhfUiRyzl4ErlHGxApSdL8x37U1BPRy9hMYYJ3t6b1fLpzxjUS8'
 
     return `
