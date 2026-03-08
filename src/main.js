@@ -43,6 +43,7 @@ const views = [
 const familySelect = document.getElementById('family-select')
 const addItemForm = document.getElementById('add-item-form')
 const newItemInput = document.getElementById('new-item-input')
+const newItemQuantity = document.getElementById('new-item-quantity')
 const shoppingList = document.getElementById('shopping-list')
 const itemTemplate = document.getElementById('item-template')
 const listCount = document.getElementById('list-count')
@@ -384,8 +385,10 @@ function renderLists(items) {
     const deleteBtn = clone.querySelector('.item-delete')
     const iconContainer = clone.querySelector('.item-icon-container')
     const iconSpan = clone.querySelector('.item-icon')
+    const quantityText = clone.querySelector('.item-quantity')
 
     nameSpan.textContent = item.name
+    quantityText.textContent = item.quantity || ''
 
     if (item.is_completed) {
       nameSpan.classList.add('line-through', 'text-slate-400', 'dark:text-slate-500')
@@ -405,8 +408,10 @@ function renderLists(items) {
     const li = clone.querySelector('li')
     const nameSpan = clone.querySelector('.item-name')
     const checkbox = clone.querySelector('.item-checkbox')
+    const quantityText = clone.querySelector('.item-quantity')
 
     nameSpan.textContent = item.name
+    quantityText.textContent = item.quantity || ''
     checkbox.checked = item.is_completed
 
     if (item.is_completed) {
@@ -430,10 +435,12 @@ function renderLists(items) {
 addItemForm.addEventListener('submit', async (e) => {
   e.preventDefault()
   const name = newItemInput.value.trim()
+  const quantity = newItemQuantity.value.trim()
   if (!name || !activeFamilyId) return
 
-  await insertItem(name)
+  await insertItem(name, quantity)
   newItemInput.value = ''
+  newItemQuantity.value = ''
   loadSuggestions()
 })
 
@@ -455,7 +462,7 @@ async function loadSuggestions() {
   itemSuggestions.innerHTML = uniqueNames.map(name => `<option value="${name}">`).join('')
 }
 
-async function insertItem(name) {
+async function insertItem(name, quantity = '') {
   // Vérifier si un article avec le même nom existe déjà (même archivé)
   const { data: existing } = await supabase
     .from('shopping_items')
@@ -465,10 +472,10 @@ async function insertItem(name) {
     .maybeSingle()
 
   if (existing) {
-    // Si il existe, on le réactive simplement
+    // Si il existe, on le réactive simplement et on met à jour la quantité
     const { error } = await supabase
       .from('shopping_items')
-      .update({ is_archived: false, is_completed: false })
+      .update({ is_archived: false, is_completed: false, quantity })
       .eq('id', existing.id)
 
     if (error) console.error('Erreur reactivation', error)
@@ -478,7 +485,7 @@ async function insertItem(name) {
 
   const { error } = await supabase
     .from('shopping_items')
-    .insert([{ name, family_id: activeFamilyId, is_archived: false }])
+    .insert([{ name, quantity, family_id: activeFamilyId, is_archived: false }])
 
   if (error) {
     console.error('Erreur ajout article', error)
