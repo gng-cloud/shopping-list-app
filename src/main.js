@@ -334,6 +334,7 @@ familySelect.addEventListener('change', (e) => {
   loadShoppingItems()
   updateProfileFamilyView()
   loadTemplates()
+  loadSuggestions()
 })
 
 async function handleCreateFamily(e) {
@@ -800,16 +801,17 @@ function handleSuggestionInput() {
 
   const matches = allFamilyItemNames
     .filter(name => name.toLowerCase().includes(query))
-    .slice(0, 5) // Limiter à 5 suggestions
+    .slice(0, 5)
 
   if (matches.length === 0) {
     suggestionsContainer.classList.add('hidden')
     return
   }
 
+  // Utiliser mousedown au lieu de click pour éviter que le focus/blur ne ferme le menu avant la sélection
   suggestionsContainer.innerHTML = matches.map(name => `
-    <div class="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer border-b border-slate-50 dark:border-slate-800 last:border-0 transition-colors"
-         onclick="selectSuggestion('${name.replace(/'/g, "\\'")}')">
+    <div class="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer border-b border-slate-100 dark:border-slate-800 last:border-0 transition-colors"
+         onmousedown="event.preventDefault(); selectSuggestion('${name.replace(/'/g, "\\'")}')">
       <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">${name}</span>
     </div>
   `).join('')

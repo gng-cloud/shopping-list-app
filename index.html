@@ -103,7 +103,7 @@
           <form id="add-item-form" class="flex gap-2">
             <div class="flex flex-1 gap-2 items-center">
               <div class="relative flex-1 group">
-                <input type="text" id="new-item-input" required list="item-suggestions"
+                <input type="text" id="new-item-input" required autocomplete="off"
                   class="w-full h-12 pl-4 pr-12 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all text-base placeholder-slate-400 outline-none"
                   placeholder="Ex: Pommes, Lait..." />
                 <!-- Scan Button -->
@@ -111,6 +111,10 @@
                   class="absolute right-2 top-1/2 -translate-y-1/2 size-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors cursor-pointer">
                   <span class="material-symbols-outlined text-xl">barcode_scanner</span>
                 </button>
+                <!-- Custom Suggestions -->
+                <div id="suggestions-container"
+                  class="hidden absolute left-0 right-0 top-full mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto">
+                </div>
               </div>
               <input type="text" id="new-item-quantity"
                 class="w-20 h-12 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all text-base placeholder-slate-400 outline-none text-center"
@@ -119,9 +123,6 @@
                 class="shrink-0 size-12 flex items-center justify-center bg-primary text-background-dark rounded-xl hover:bg-primary/90 transition-all active:scale-95 shadow-md shadow-primary/20 cursor-pointer">
                 <span class="material-symbols-outlined text-2xl">add</span>
               </button>
-              <div id="suggestions-container"
-                class="hidden absolute left-0 right-0 top-full mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto">
-              </div>
             </div>
           </form>
         </section>
