@@ -175,12 +175,18 @@ function handleAuthStateChange(session) {
 }
 
 function setupRealtimeSubscription() {
+  if (!currentUser) return
+
+  const channelName = `family-updates-${currentUser.id.substring(0, 8)}`
+  console.log(`Initialisation de la souscription temps réel: ${channelName}`)
+
   if (familyMembersSubscription) {
+    console.log("Suppression de l'ancienne souscription...")
     supabase.removeChannel(familyMembersSubscription)
   }
 
   familyMembersSubscription = supabase
-    .channel('family-changes')
+    .channel(channelName)
     .on(
       'postgres_changes',
       {
@@ -188,13 +194,16 @@ function setupRealtimeSubscription() {
         schema: 'public',
         table: 'family_members'
       },
-      () => {
+      (payload) => {
+        console.log('Changement détecté dans family_members:', payload.eventType)
         loadInvitations()
         loadFamilies()
         loadFamilyMembers()
       }
     )
-    .subscribe()
+    .subscribe((status) => {
+      console.log(`Statut de la souscription temps réel: ${status}`)
+    })
 }
 
 async function handleAuthSubmit(e) {
@@ -514,6 +523,7 @@ profileForm.addEventListener('submit', async (e) => {
 
 async function loadInvitations() {
   if (!currentUser) return
+  console.log('Chargement des invitations pour:', currentUser.email)
 
   const { data, error } = await supabase
     .from('family_members')
@@ -521,7 +531,15 @@ async function loadInvitations() {
     .eq('user_id', currentUser.id)
     .eq('status', 'pending')
 
-  if (error || !data || data.length === 0) {
+  if (error) {
+    console.error('Erreur chargement invitations:', error)
+    invitationsSection.classList.add('hidden')
+    return
+  }
+
+  console.log('Invitations trouvées:', data?.length || 0)
+
+  if (!data || data.length === 0) {
     invitationsSection.classList.add('hidden')
     return
   }
