@@ -459,6 +459,7 @@ async function loadSuggestions() {
 }
 
 async function insertItem(name, quantity = '') {
+  console.log(`Insertion: ${name}, Qté: ${quantity}`)
   // Vérifier si un article avec le même nom existe déjà (même archivé)
   const { data: existing } = await supabase
     .from('shopping_items')
@@ -584,7 +585,8 @@ async function onScanSuccess(decodedText) {
     if (data.status === 1 && data.product && data.product.product_name) {
       const productName = data.product.product_name
       const fullName = data.product.brands ? `${data.product.brands} - ${productName}` : productName
-      await insertItem(fullName)
+      const qty = newItemQuantity.value.trim()
+      await insertItem(fullName, qty)
     } else {
       alert(`Produit non trouvé pour le code barre: ${decodedText}`)
       newItemInput.value = decodedText
