@@ -545,22 +545,25 @@ async function loadInvitations() {
   }
 
   invitationsSection.classList.remove('hidden')
-  invitationsList.innerHTML = data.map(inv => `
-    <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
-      <div class="flex flex-col">
-        <span class="text-xs font-semibold text-slate-500 uppercase">Invitation pour</span>
-        <span class="text-sm font-bold text-slate-900 dark:text-white">${inv.families.name}</span>
+  invitationsList.innerHTML = data.map(inv => {
+    const familyName = inv.families ? inv.families.name : 'Famille inconnue'
+    return `
+      <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
+        <div class="flex flex-col">
+          <span class="text-xs font-semibold text-slate-500 uppercase">Invitation pour</span>
+          <span class="text-sm font-bold text-slate-900 dark:text-white">${familyName}</span>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="handleAcceptInvitation('${inv.id}')" class="bg-primary/10 hover:bg-primary/20 text-primary font-bold px-3 py-2 rounded-xl text-xs transition-all">
+            Accepter
+          </button>
+          <button onclick="handleDeclineInvitation('${inv.id}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 font-bold px-3 py-2 rounded-xl text-xs transition-all">
+            Refuser
+          </button>
+        </div>
       </div>
-      <div class="flex gap-2">
-        <button onclick="handleAcceptInvitation('${inv.id}')" class="bg-primary/10 hover:bg-primary/20 text-primary font-bold px-3 py-2 rounded-xl text-xs transition-all">
-          Accepter
-        </button>
-        <button onclick="handleDeclineInvitation('${inv.id}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 font-bold px-3 py-2 rounded-xl text-xs transition-all">
-          Refuser
-        </button>
-      </div>
-    </div>
-  `).join('')
+    `
+  }).join('')
 }
 
 window.handleAcceptInvitation = async (invitationId) => {
@@ -592,7 +595,10 @@ window.handleDeclineInvitation = async (invitationId) => {
 
 inviteForm.addEventListener('submit', async (e) => {
   e.preventDefault()
-  const email = inviteEmail.value
+  const email = inviteEmail.value.trim()
+  if (!email) return
+
+  console.log("Tentative d'invitation pour:", email)
   inviteMsg.classList.remove('hidden')
   inviteMsg.textContent = 'Invitation en cours...'
   inviteMsg.className = 'text-xs mt-2 text-primary'

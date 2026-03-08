@@ -82,6 +82,21 @@
       </header>
 
       <main class="flex-1 overflow-y-auto pb-24">
+        <!-- Invitations Section (Visible if pending) -->
+        <section id="invitations-section" class="mt-4 px-4 hidden">
+          <div
+            class="bg-amber-50 dark:bg-amber-900/20 p-6 rounded-3xl shadow-sm space-y-4 border border-amber-100 dark:border-amber-900/30">
+            <h2 class="text-xl font-bold flex items-center gap-2 text-amber-900 dark:text-amber-100">
+              <span
+                class="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 text-sm">📩</span>
+              Invitations
+            </h2>
+            <div id="invitations-list" class="space-y-3">
+              <!-- Les invitations apparaîtront ici -->
+            </div>
+          </div>
+        </section>
+
         <!-- Add Item Section -->
         <section class="px-4 py-3">
           <label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">Ajouter un article</label>
@@ -273,21 +288,6 @@
 
           </div>
         </section>
-        <section class="mt-6 px-6">
-          <div id="invitations-section"
-            class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm space-y-4 border border-slate-100 dark:border-slate-700/50 hidden">
-            <h2 class="text-xl font-bold flex items-center gap-2">
-              <span
-                class="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">📩</span>
-              Invitations
-            </h2>
-            <div id="invitations-list" class="space-y-3">
-              <!-- Les invitations apparaîtront ici -->
-            </div>
-          </div>
-        </section>
-
-        <!-- Nouvelle Famille -->
         <section class="mt-6 px-6">
           <div
             class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm space-y-4 border border-slate-100 dark:border-slate-700/50">
