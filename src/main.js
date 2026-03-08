@@ -173,7 +173,13 @@ async function handleAuthSubmit(e) {
   if (currentAuthMode === 'login') {
     result = await supabase.auth.signInWithPassword({ email, password })
   } else {
-    result = await supabase.auth.signUp({ email, password })
+    // On spécifie l'URL de redirection explicitement pour GitHub Pages
+    const redirectTo = window.location.origin + window.location.pathname
+    result = await supabase.auth.signUp({
+      email,
+      password,
+      options: { redirectTo }
+    })
   }
 
   const { data, error } = result
