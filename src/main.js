@@ -12,16 +12,16 @@ let currentUser = null
 let currentFamilies = []
 let activeFamilyId = null
 let html5QrCode = null
+let currentAuthMode = 'login' // 'login' ou 'signup'
 
 // Éléments DOM Auth
 const authSection = document.getElementById('auth-section')
 const mainSection = document.getElementById('main-section')
-const authForm = document.getElementById('auth-form')
-const emailInput = document.getElementById('email')
-const passwordInput = document.getElementById('password')
-const loginBtn = document.getElementById('login-btn')
-const signupBtn = document.getElementById('signup-btn')
 const authError = document.getElementById('auth-error')
+const authTitle = document.getElementById('auth-title')
+const authSubtitle = document.getElementById('auth-subtitle')
+const authSubmitBtn = document.getElementById('auth-submit-btn')
+const authToggleBtn = document.getElementById('auth-toggle-btn')
 const logoutBtn = document.getElementById('logout-btn')
 
 // Éléments DOM Vues et Navigation
@@ -136,35 +136,52 @@ function handleAuthStateChange(session) {
   }
 }
 
-async function handleLogin(e) {
+async function handleAuthSubmit(e) {
   e.preventDefault()
   authError.classList.add('hidden')
+  authSubmitBtn.disabled = true
+  authSubmitBtn.textContent = 'Chargement...'
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email: emailInput.value,
-    password: passwordInput.value,
-  })
+  const email = emailInput.value
+  const password = passwordInput.value
+
+  let result
+  if (currentAuthMode === 'login') {
+    result = await supabase.auth.signInWithPassword({ email, password })
+  } else {
+    result = await supabase.auth.signUp({ email, password })
+  }
+
+  const { data, error } = result
+  authSubmitBtn.disabled = false
+  authSubmitBtn.textContent = currentAuthMode === 'login' ? 'Se connecter' : 'S\'inscrire'
 
   if (error) {
     authError.textContent = error.message
     authError.classList.remove('hidden')
+  } else if (currentAuthMode === 'signup' && data.user && !data.session) {
+    // Signup réussi mais confirmation email requise
+    alert("Compte créé ! Merci de vérifier tes emails pour valider ton compte avant de te connecter.")
+    toggleAuthMode() // Revenir en mode login
   }
 }
 
-async function handleSignup() {
-  authError.classList.add('hidden')
+function toggleAuthMode() {
+  currentAuthMode = currentAuthMode === 'login' ? 'signup' : 'login'
 
-  const { error } = await supabase.auth.signUp({
-    email: emailInput.value,
-    password: passwordInput.value,
-  })
-
-  if (error) {
-    authError.textContent = error.message
-    authError.classList.remove('hidden')
+  if (currentAuthMode === 'signup') {
+    authTitle.textContent = "Rejoindre Family Cart"
+    authSubtitle.textContent = "Créez votre compte pour commencer"
+    authSubmitBtn.textContent = "S'inscrire"
+    authToggleBtn.textContent = "Déjà un compte ? Se connecter"
   } else {
-    alert('Vérifiez votre email si nécessaire, ou connectez-vous directement !')
+    authTitle.textContent = "Family Cart"
+    authSubtitle.textContent = "Gérez vos listes ensemble"
+    authSubmitBtn.textContent = "Se connecter"
+    authToggleBtn.textContent = "Pas de compte ? Créer un compte"
   }
+
+  authError.classList.add('hidden')
 }
 
 async function handleLogout() {
@@ -297,7 +314,7 @@ async function loadFamilyMembers() {
 
     return `
       <li class="flex items-center gap-4 p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-        <img alt="Membre" class="w-10 h-10 rounded-full object-cover" src="${isMe ? 'https://lh3.googleusercontent.com/aida-public/AB6AXuDlHpcljmtsN_fW-1my03yBu9MzDR-J8LVpSoBRx9ufvZ8lzJ4Ahru48elZ0-Q85oZStJpxwev2_JmgK5DBgusBdoE_l-mNaWT_vcQGrZeoS6rqIk6UUAbA-ZYa7LjBZZiOke-vLLDg9BG6fdm6xrmooZzgAPegLmQ4iWTSwca3GuwgDQVh1XhHiz9vjPj17zTS5LJnZZqozoyxsYAggZ3k54U1szQA6t75w7ptlmDEOqvvtcYQR-QG9YPZk0HS-y1pXm5b-VSPoz4' : avatar}"/>
+        <img alt="Membre" class="w-10 h-10 rounded-full object-cover" src="${isMe ? 'https://lh3.googleusercontent.com/aida-public/AB6AXuDlHpcljmtsN_fW-1my03yBu9MzDR-J8LVpSoBRx9ufvZ8lzJ4Ahru48elZ0-Q85oZStJpxwev2_JmgK5DBgusBdoE_l-mNaWT_vcQGrZeoS6rqIk6UUAbA-ZYa7LjBZZiOke-vLLDg9BG6fdm6xrmooZzgAPegLmQ4iWTSwca3GuwgDQVh1XhHiz9vjPj17zTS5LJnZZqozoyxsYAggz3k54U1szQA6t75w7ptlmDEOqvvtcYQR-QG9YPZk0HS-y1pXm5b-VSPoz4' : avatar}"/>
         <div class="flex-1">
           <p class="font-semibold text-slate-900 dark:text-slate-100">${displayName}</p>
           <p class="text-xs text-slate-500">${m.role === 'owner' ? 'Propriétaire' : 'Membre'}</p>
@@ -656,11 +673,8 @@ async function onScanSuccess(decodedText) {
 // --- Écouteurs globaux ---
 
 function setupEventListeners() {
-  loginBtn.addEventListener('click', handleLogin)
-  signupBtn.addEventListener('click', (e) => {
-    e.preventDefault()
-    handleSignup()
-  })
+  authForm.addEventListener('submit', handleAuthSubmit)
+  authToggleBtn.addEventListener('click', toggleAuthMode)
   logoutBtn.addEventListener('click', handleLogout)
 
   navList.addEventListener('click', () => switchView('view-list'))

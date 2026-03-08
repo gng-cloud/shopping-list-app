@@ -16,8 +16,8 @@
     <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-6">
       <span class="material-symbols-outlined text-primary text-3xl">shopping_cart</span>
     </div>
-    <h1 class="text-3xl font-bold text-center mb-2">Family Cart</h1>
-    <p class="text-center text-slate-500 mb-8 font-medium">Gérez vos listes ensemble</p>
+    <h1 id="auth-title" class="text-3xl font-bold text-center mb-2">Family Cart</h1>
+    <p id="auth-subtitle" class="text-center text-slate-500 mb-8 font-medium">Gérez vos listes ensemble</p>
 
     <form id="auth-form" class="space-y-4 w-full max-w-sm">
       <div>
@@ -36,15 +36,15 @@
       </div>
 
       <div class="pt-2">
-        <button type="submit" id="login-btn"
+        <button type="submit" id="auth-submit-btn"
           class="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold px-4 py-3.5 rounded-xl transition-colors cursor-pointer">
           Se connecter
         </button>
       </div>
-      <div>
-        <button type="button" id="signup-btn"
-          class="w-full bg-primary/10 hover:bg-primary/20 text-primary font-bold px-4 py-3.5 rounded-xl transition-colors border border-primary/20 cursor-pointer">
-          Créer un compte
+      <div class="text-center pt-4">
+        <button type="button" id="auth-toggle-btn"
+          class="text-primary font-bold text-sm hover:underline cursor-pointer">
+          Pas de compte ? Créer un compte
         </button>
       </div>
     </form>
