@@ -272,6 +272,8 @@ async function handleAuthSubmit(e) {
       msg = 'Cet email est déjà utilisé.'
     } else if (msg.includes('Password should be')) {
       msg = 'Le mot de passe doit faire au moins 6 caractères.'
+    } else if (msg.includes('Email rate limit exceeded')) {
+      msg = 'Trop de tentatives en peu de temps. Merci de patienter quelques minutes.'
     }
     authError.textContent = msg
     authError.classList.remove('hidden')
