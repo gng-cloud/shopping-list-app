@@ -116,6 +116,30 @@
             Scanning...</p>
         </div>
 
+        <!-- Templates Section -->
+        <section class="mt-4 px-4">
+          <div
+            class="bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-800">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Listes Types</h2>
+            <div class="flex gap-2">
+              <select id="template-select"
+                class="flex-1 bg-slate-50 dark:bg-slate-800 border-none rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                <option value="">Charger une liste...</option>
+              </select>
+              <button id="apply-template-btn"
+                class="bg-primary/10 text-primary p-2 rounded-xl hover:bg-primary/20 transition-colors cursor-pointer"
+                title="Appliquer">
+                <span class="material-symbols-outlined">playlist_add_check</span>
+              </button>
+              <button id="save-template-btn"
+                class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 p-2 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                title="Enregistrer l'actuelle">
+                <span class="material-symbols-outlined">save</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
         <!-- List Items Section -->
         <section class="mt-6 px-4">
           <button id="clear-completed-btn"

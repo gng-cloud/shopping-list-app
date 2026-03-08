@@ -48,6 +48,9 @@ const shoppingList = document.getElementById('shopping-list')
 const itemTemplate = document.getElementById('item-template')
 const listCount = document.getElementById('list-count')
 const itemSuggestions = document.getElementById('item-suggestions')
+const templateSelect = document.getElementById('template-select')
+const applyTemplateBtn = document.getElementById('apply-template-btn')
+const saveTemplateBtn = document.getElementById('save-template-btn')
 
 // Éléments Scanner
 const scanBtn = document.getElementById('scan-btn')
@@ -205,9 +208,9 @@ async function loadFamilies() {
   if (currentFamilies.length > 0) {
     activeFamilyId = currentFamilies[0].id
     familySelect.value = activeFamilyId
-    loadShoppingItems()
     updateProfileFamilyView()
     loadSuggestions()
+    loadTemplates()
   }
 }
 
@@ -215,6 +218,7 @@ familySelect.addEventListener('change', (e) => {
   activeFamilyId = e.target.value
   loadShoppingItems()
   updateProfileFamilyView()
+  loadTemplates()
 })
 
 async function handleCreateFamily(e) {
@@ -664,6 +668,104 @@ function setupEventListeners() {
   navProfile.addEventListener('click', () => switchView('view-profile'))
   createFamilyForm.addEventListener('submit', handleCreateFamily)
   clearCompletedBtn.addEventListener('click', archiveCompletedItems)
+  saveTemplateBtn.addEventListener('click', handleSaveTemplate)
+  applyTemplateBtn.addEventListener('click', handleApplyTemplate)
+}
+
+// --- Listes Types (Templates) ---
+
+async function loadTemplates() {
+  if (!activeFamilyId) return
+
+  const { data, error } = await supabase
+    .from('list_templates')
+    .select('*')
+    .eq('family_id', activeFamilyId)
+    .order('name')
+
+  if (error) {
+    console.error('Erreur chargement templates', error)
+    return
+  }
+
+  templateSelect.innerHTML = '<option value="">Charger une liste...</option>' +
+    data.map(t => `<option value="${t.id}">${t.name}</option>`).join('')
+}
+
+async function handleSaveTemplate() {
+  if (!activeFamilyId) return
+
+  // 1. Récupérer les articles actifs
+  const { data: items, error: fetchError } = await supabase
+    .from('shopping_items')
+    .select('name, quantity')
+    .eq('family_id', activeFamilyId)
+    .eq('is_archived', false)
+
+  if (fetchError || !items || items.length === 0) {
+    alert("La liste est vide ou inaccessible.")
+    return
+  }
+
+  const name = prompt("Nom de cette liste type (ex: Hebdo, Barbecue...) :")
+  if (!name) return
+
+  try {
+    // 2. Créer le template
+    const { data: template, error: tError } = await supabase
+      .from('list_templates')
+      .insert([{ family_id: activeFamilyId, name }])
+      .select()
+      .single()
+
+    if (tError) throw tError
+
+    // 3. Créer les items du template
+    const templateItems = items.map(it => ({
+      template_id: template.id,
+      name: it.name,
+      quantity: it.quantity
+    }))
+
+    const { error: itemsError } = await supabase
+      .from('list_template_items')
+      .insert(templateItems)
+
+    if (itemsError) throw itemsError
+
+    alert("Liste type enregistrée !")
+    loadTemplates()
+  } catch (err) {
+    console.error("Erreur sauvegarde template", err)
+    alert("Un problème est survenu lors de l'enregistrement.")
+  }
+}
+
+async function handleApplyTemplate() {
+  const templateId = templateSelect.value
+  if (!templateId) return
+
+  if (!confirm("Voulez-vous ajouter les articles de cette liste type à votre liste actuelle ?")) return
+
+  try {
+    const { data: items, error } = await supabase
+      .from('list_template_items')
+      .select('name, quantity')
+      .eq('template_id', templateId)
+
+    if (error) throw error
+
+    // On insère chaque article. La logique d'increment existante s'occupera du reste.
+    for (const item of items) {
+      await insertItem(item.name, item.quantity)
+    }
+
+    alert("Articles ajoutés !")
+    loadShoppingItems()
+  } catch (err) {
+    console.error("Erreur application template", err)
+    alert("Impossible d'appliquer la liste type.")
+  }
 }
 
 // Lancer l'app
