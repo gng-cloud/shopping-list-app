@@ -54,7 +54,8 @@ const newItemQuantity = document.getElementById('new-item-quantity')
 const shoppingList = document.getElementById('shopping-list')
 const itemTemplate = document.getElementById('item-template')
 const listCount = document.getElementById('list-count')
-const itemSuggestions = document.getElementById('item-suggestions')
+const suggestionsContainer = document.getElementById('suggestions-container')
+let allFamilyItemNames = []
 const templateSelect = document.getElementById('template-select')
 const applyTemplateBtn = document.getElementById('apply-template-btn')
 const deleteTemplateBtn = document.getElementById('delete-template-btn')
@@ -777,7 +778,6 @@ addItemForm.addEventListener('submit', async (e) => {
 async function loadSuggestions() {
   if (!activeFamilyId) return
 
-  // On récupère les noms uniques de tous les articles (actifs ou archivés) de cette famille
   const { data, error } = await supabase
     .from('shopping_items')
     .select('name')
@@ -788,8 +788,38 @@ async function loadSuggestions() {
     return
   }
 
-  const uniqueNames = Array.from(new Set(data.map(item => item.name)))
-  itemSuggestions.innerHTML = uniqueNames.map(name => `<option value="${name}">`).join('')
+  allFamilyItemNames = Array.from(new Set(data.map(item => item.name)))
+}
+
+function handleSuggestionInput() {
+  const query = newItemInput.value.trim().toLowerCase()
+  if (!query || allFamilyItemNames.length === 0) {
+    suggestionsContainer.classList.add('hidden')
+    return
+  }
+
+  const matches = allFamilyItemNames
+    .filter(name => name.toLowerCase().includes(query))
+    .slice(0, 5) // Limiter à 5 suggestions
+
+  if (matches.length === 0) {
+    suggestionsContainer.classList.add('hidden')
+    return
+  }
+
+  suggestionsContainer.innerHTML = matches.map(name => `
+    <div class="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer border-b border-slate-50 dark:border-slate-800 last:border-0 transition-colors"
+         onclick="selectSuggestion('${name.replace(/'/g, "\\'")}')">
+      <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">${name}</span>
+    </div>
+  `).join('')
+  suggestionsContainer.classList.remove('hidden')
+}
+
+window.selectSuggestion = (name) => {
+  newItemInput.value = name
+  suggestionsContainer.classList.add('hidden')
+  newItemQuantity.focus()
 }
 
 function parseQuantity(q) {
@@ -1010,6 +1040,16 @@ function setupEventListeners() {
   if (saveTemplateBtn) saveTemplateBtn.addEventListener('click', handleSaveTemplate)
   if (deleteTemplateBtn) deleteTemplateBtn.addEventListener('click', handleDeleteTemplate)
   applyTemplateBtn.addEventListener('click', handleApplyTemplate)
+
+  // Suggestions personnalisées
+  newItemInput.addEventListener('input', handleSuggestionInput)
+  newItemInput.addEventListener('focus', handleSuggestionInput)
+  // Fermer les suggestions si on clique ailleurs
+  document.addEventListener('click', (e) => {
+    if (!newItemInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+      suggestionsContainer.classList.add('hidden')
+    }
+  })
 }
 
 // --- Listes Types (Templates) ---
