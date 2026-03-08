@@ -144,20 +144,24 @@
             <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Listes Types</h2>
             <div class="flex gap-2">
               <select id="template-select"
-                class="flex-1 bg-slate-50 dark:bg-slate-800 border-none rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                class="flex-1 bg-slate-50 dark:bg-slate-800 border-none rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                 <option value="">Charger une liste...</option>
               </select>
               <button id="apply-template-btn"
-                class="bg-primary/10 text-primary p-2 rounded-xl hover:bg-primary/20 transition-colors cursor-pointer"
-                title="Appliquer">
-                <span class="material-symbols-outlined">playlist_add_check</span>
+                class="bg-primary text-background-dark font-bold p-2 rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100"
+                title="Appliquer cette liste">
+                <span class="material-symbols-outlined text-xl">playlist_add_check</span>
               </button>
-              <button id="save-template-btn"
-                class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 p-2 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
-                title="Enregistrer l'actuelle">
-                <span class="material-symbols-outlined">save</span>
+              <button id="delete-template-btn"
+                class="bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 p-2 rounded-xl transition-all active:scale-95 disabled:opacity-50"
+                title="Supprimer cette liste type">
+                <span class="material-symbols-outlined text-xl">delete</span>
               </button>
             </div>
+            <button id="save-template-btn"
+              class="w-full mt-3 bg-secondary/10 dark:bg-secondary/20 text-secondary-dark dark:text-secondary font-bold py-2.5 rounded-xl text-sm transition-all active:scale-[0.98]">
+              Enregistrer la liste actuelle comme modèle
+            </button>
           </div>
         </section>
 

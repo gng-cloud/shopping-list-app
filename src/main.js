@@ -57,6 +57,7 @@ const listCount = document.getElementById('list-count')
 const itemSuggestions = document.getElementById('item-suggestions')
 const templateSelect = document.getElementById('template-select')
 const applyTemplateBtn = document.getElementById('apply-template-btn')
+const deleteTemplateBtn = document.getElementById('delete-template-btn')
 const saveTemplateBtn = document.getElementById('save-template-btn')
 
 // Éléments Scanner
@@ -1006,7 +1007,8 @@ function setupEventListeners() {
   navProfile.addEventListener('click', () => switchView('view-profile'))
   createFamilyForm.addEventListener('submit', handleCreateFamily)
   clearCompletedBtn.addEventListener('click', archiveCompletedItems)
-  saveTemplateBtn.addEventListener('click', handleSaveTemplate)
+  if (saveTemplateBtn) saveTemplateBtn.addEventListener('click', handleSaveTemplate)
+  if (deleteTemplateBtn) deleteTemplateBtn.addEventListener('click', handleDeleteTemplate)
   applyTemplateBtn.addEventListener('click', handleApplyTemplate)
 }
 
@@ -1045,22 +1047,46 @@ async function handleSaveTemplate() {
     return
   }
 
-  const name = prompt("Nom de cette liste type (ex: Hebdo, Barbecue...) :")
-  if (!name) return
+  const selectedTemplateId = templateSelect.value
+  let targetTemplateId = null
+  let name = ""
+
+  if (selectedTemplateId) {
+    const confirmUpdate = confirm("Voulez-vous mettre à jour la liste type sélectionnée ?\n(Annuler pour en créer une nouvelle)")
+    if (confirmUpdate) {
+      targetTemplateId = selectedTemplateId
+    }
+  }
+
+  if (!targetTemplateId) {
+    name = prompt("Nom de cette nouvelle liste type (ex: Hebdo, Barbecue...) :")
+    if (!name) return
+  }
 
   try {
-    // 2. Créer le template
-    const { data: template, error: tError } = await supabase
-      .from('list_templates')
-      .insert([{ family_id: activeFamilyId, name }])
-      .select()
-      .single()
+    if (!targetTemplateId) {
+      // Créer le template
+      const { data: template, error: tError } = await supabase
+        .from('list_templates')
+        .insert([{ family_id: activeFamilyId, name }])
+        .select()
+        .single()
 
-    if (tError) throw tError
+      if (tError) throw tError
+      targetTemplateId = template.id
+    } else {
+      // Mettre à jour : on vide d'abord les items existants
+      const { error: deleteError } = await supabase
+        .from('list_template_items')
+        .delete()
+        .eq('template_id', targetTemplateId)
 
-    // 3. Créer les items du template
+      if (deleteError) throw deleteError
+    }
+
+    // Créer les items du template
     const templateItems = items.map(it => ({
-      template_id: template.id,
+      template_id: targetTemplateId,
       name: it.name,
       quantity: it.quantity
     }))
@@ -1071,11 +1097,37 @@ async function handleSaveTemplate() {
 
     if (itemsError) throw itemsError
 
-    alert("Liste type enregistrée !")
+    alert(targetTemplateId === selectedTemplateId ? "Liste type mise à jour !" : "Nouvelle liste type enregistrée !")
     loadTemplates()
   } catch (err) {
     console.error("Erreur sauvegarde template", err)
     alert("Un problème est survenu lors de l'enregistrement.")
+  }
+}
+
+async function handleDeleteTemplate() {
+  const templateId = templateSelect.value
+  if (!templateId) {
+    alert("Veuillez sélectionner une liste à supprimer.")
+    return
+  }
+
+  const templateName = templateSelect.options[templateSelect.selectedIndex].text
+  if (!confirm(`Voulez-vous vraiment supprimer la liste type "${templateName}" ?`)) return
+
+  try {
+    const { error } = await supabase
+      .from('list_templates')
+      .delete()
+      .eq('id', templateId)
+
+    if (error) throw error
+
+    alert("Liste type supprimée.")
+    loadTemplates()
+  } catch (err) {
+    console.error("Erreur suppression template", err)
+    alert("Impossible de supprimer la liste type.")
   }
 }
 
