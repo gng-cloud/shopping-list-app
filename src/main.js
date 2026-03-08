@@ -86,9 +86,8 @@ const inviteMsg = document.getElementById('invite-msg')
 const profileForm = document.getElementById('profile-form')
 const profileFirstNameInput = document.getElementById('profile-first-name')
 const profileMsg = document.getElementById('profile-msg')
-const invitationsSection = document.getElementById('invitations-section')
-const invitationsList = document.getElementById('invitations-list')
-const membersList = document.getElementById('members-list')
+const sentInvitationsContainer = document.getElementById('sent-invitations-container')
+const sentInvitationsList = document.getElementById('sent-invitations-list')
 const createFamilyForm = document.getElementById('create-family-form')
 const newFamilyName = document.getElementById('new-family-name')
 const createFamilyMsg = document.getElementById('create-family-msg')
@@ -363,6 +362,7 @@ async function loadFamilyMembers() {
   if (!activeFamilyId) {
     membersList.innerHTML = '<li class="p-4 text-center text-slate-400 italic">Aucun membre.</li>'
     familyMemberCount.textContent = '0 Membre'
+    sentInvitationsContainer.classList.add('hidden')
     return
   }
 
@@ -371,6 +371,7 @@ async function loadFamilyMembers() {
     .select(`
       user_id, 
       role,
+      status,
       profiles (
         first_name
       )
@@ -382,11 +383,15 @@ async function loadFamilyMembers() {
     return
   }
 
-  familyMemberCount.textContent = `${data.length} Membre${data.length > 1 ? 's' : ''}`
+  const acceptedMembers = data.filter(m => m.status === 'accepted')
+  const pendingMembers = data.filter(m => m.status === 'pending')
+
+  familyMemberCount.textContent = `${acceptedMembers.length} Membre${acceptedMembers.length > 1 ? 's' : ''}`
 
   const isOwner = data.find(m => m.user_id === currentUser.id)?.role === 'owner'
 
-  membersList.innerHTML = data.map(m => {
+  // Afficher les membres acceptés
+  membersList.innerHTML = acceptedMembers.map(m => {
     const isMe = m.user_id === currentUser.id
     const firstName = m.profiles ? m.profiles.first_name : null
 
@@ -411,6 +416,25 @@ async function loadFamilyMembers() {
       </li>
     `
   }).join('')
+
+  // Afficher les invitations envoyées (pour le propriétaire)
+  if (isOwner && pendingMembers.length > 0) {
+    sentInvitationsContainer.classList.remove('hidden')
+    sentInvitationsList.innerHTML = pendingMembers.map(m => {
+      const emailHint = m.user_id.substring(0, 8) + '...'
+      return `
+        <li class="flex items-center justify-between p-2 bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-amber-500 text-sm">hourglass_empty</span>
+            <span class="text-xs font-medium text-slate-600 dark:text-slate-400">En attente...</span>
+          </div>
+          <button onclick="handleRemoveMember('${m.user_id}')" class="text-xs text-red-500 hover:underline">Annuler</button>
+        </li>
+      `
+    }).join('')
+  } else {
+    sentInvitationsContainer.classList.add('hidden')
+  }
 }
 
 window.handleRemoveMember = async (userId) => {
