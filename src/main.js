@@ -631,10 +631,19 @@ inviteForm.addEventListener('submit', async (e) => {
   })
 
   if (error) {
-    inviteMsg.textContent = 'Erreur : Utilisateur introuvable ou droits insuffisants.'
-    inviteMsg.className = 'text-xs mt-2 text-red-500'
+    console.error('Erreur invitation:', error)
+    if (error.message.includes('déjà membre')) {
+      inviteMsg.textContent = 'Cette personne est déjà membre de la famille.'
+    } else if (error.message.includes('introuvable')) {
+      inviteMsg.textContent = 'Utilisateur introuvable. Verifiez l\'email.'
+    } else if (error.message.includes('autorisé')) {
+      inviteMsg.textContent = 'Seul le propriétaire peut inviter des membres.'
+    } else {
+      inviteMsg.textContent = 'Erreur lors de l\'envoi de l\'invitation.'
+    }
+    inviteMsg.className = 'text-xs mt-2 text-red-500 font-bold'
   } else {
-    inviteMsg.textContent = 'Membre ajouté avec succès !'
+    inviteMsg.textContent = 'Invitation envoyée avec succès !'
     inviteMsg.className = 'text-xs mt-2 text-primary font-bold'
     inviteEmail.value = ''
     loadFamilyMembers()
