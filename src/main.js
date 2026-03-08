@@ -12,6 +12,7 @@ let currentUser = null
 let currentFamilies = []
 let activeFamilyId = null
 let html5QrCode = null
+let isProcessingScan = false // Empêche les scans multiples simultanés
 let currentAuthMode = 'login' // 'login' ou 'signup'
 
 // Éléments DOM Auth
@@ -644,7 +645,10 @@ async function archiveCompletedItems() {
 // --- Scanner de code-barres (OpenFoodFacts) ---
 
 scanBtn.addEventListener('click', async () => {
+  if (isProcessingScan) return
+
   scannerContainer.classList.remove('hidden')
+  scannerStatus.textContent = "Scanning..."
 
   if (!html5QrCode) {
     html5QrCode = new Html5Qrcode("reader")
@@ -658,6 +662,7 @@ scanBtn.addEventListener('click', async () => {
       onScanFailure
     )
   } catch (err) {
+    console.error("Erreur scanner start", err)
     alert("Erreur d'accès à la caméra. Vérifiez vos permissions.")
     scannerContainer.classList.add('hidden')
   }
@@ -666,8 +671,16 @@ scanBtn.addEventListener('click', async () => {
 closeScannerBtn.addEventListener('click', stopScanner)
 
 async function stopScanner() {
-  if (html5QrCode && html5QrCode.isScanning) {
-    await html5QrCode.stop()
+  if (html5QrCode) {
+    try {
+      if (html5QrCode.isScanning) {
+        await html5QrCode.stop()
+      }
+      // Re-créer l'instance à chaque fois peut aider sur certains navigateurs mobiles
+      html5QrCode = null
+    } catch (err) {
+      console.warn("Erreur lors de l'arrêt du scanner", err)
+    }
   }
   scannerContainer.classList.add('hidden')
 }
@@ -677,6 +690,10 @@ function onScanFailure(error) {
 }
 
 async function onScanSuccess(decodedText) {
+  if (isProcessingScan) return
+  isProcessingScan = true
+
+  console.log("Code barre détecté:", decodedText)
   await stopScanner()
   scannerStatus.textContent = "Recherche du produit..."
 
@@ -700,6 +717,7 @@ async function onScanSuccess(decodedText) {
     console.error("OpenFoodFacts error", err)
     alert("Erreur réseau lors de la recherche du produit.")
   } finally {
+    isProcessingScan = false
     scannerStatus.textContent = "Scanning..."
     scannerContainer.classList.add('hidden')
   }
