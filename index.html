@@ -80,23 +80,25 @@
         <section class="px-4 py-3">
           <label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">Ajouter un article</label>
           <form id="add-item-form" class="flex gap-2">
-            <div class="relative flex-1 group flex gap-2">
-              <input type="text" id="new-item-input" required list="item-suggestions"
-                class="flex-1 h-12 pl-4 pr-12 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all text-base placeholder-slate-400 outline-none"
-                placeholder="Ex: Pommes, Lait..." />
+            <div class="flex flex-1 gap-2 items-center">
+              <div class="relative flex-1 group">
+                <input type="text" id="new-item-input" required list="item-suggestions"
+                  class="w-full h-12 pl-4 pr-12 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all text-base placeholder-slate-400 outline-none"
+                  placeholder="Ex: Pommes, Lait..." />
+                <!-- Scan Button -->
+                <button type="button" id="scan-btn"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 size-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors cursor-pointer">
+                  <span class="material-symbols-outlined text-xl">barcode_scanner</span>
+                </button>
+              </div>
               <input type="text" id="new-item-quantity"
-                class="w-20 h-12 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all text-base placeholder-slate-400 outline-none"
+                class="w-20 h-12 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all text-base placeholder-slate-400 outline-none text-center"
                 placeholder="Qté" />
-              <datalist id="item-suggestions"></datalist>
-              <!-- Scan Button -->
-              <button type="button" id="scan-btn"
-                class="absolute right-12 top-1/2 -translate-y-1/2 size-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors cursor-pointer">
-                <span class="material-symbols-outlined text-xl">barcode_scanner</span>
-              </button>
               <button type="submit"
-                class="absolute right-2 top-1/2 -translate-y-1/2 size-8 flex items-center justify-center bg-primary text-background-dark rounded-lg hover:bg-primary/90 transition-colors cursor-pointer">
-                <span class="material-symbols-outlined text-xl">add</span>
+                class="shrink-0 size-12 flex items-center justify-center bg-primary text-background-dark rounded-xl hover:bg-primary/90 transition-all active:scale-95 shadow-md shadow-primary/20 cursor-pointer">
+                <span class="material-symbols-outlined text-2xl">add</span>
               </button>
+              <datalist id="item-suggestions"></datalist>
             </div>
           </form>
         </section>
@@ -300,8 +302,7 @@
             <span class="material-symbols-outlined text-primary text-xl item-icon">category</span>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="item-name font-semibold text-slate-800 dark:text-slate-100 truncate"></p>
-            <p class="item-quantity text-xs text-slate-500 font-medium"></p>
+            <p class="item-display font-semibold text-slate-800 dark:text-slate-100 truncate"></p>
           </div>
         </div>
         <div class="flex items-center">
@@ -322,8 +323,7 @@
         class="item-checkbox checkbox-custom h-7 w-7 rounded-lg border-2 border-primary/30 bg-transparent text-primary focus:ring-primary focus:ring-offset-0 checked:bg-primary checked:border-primary cursor-pointer transition-colors" />
       <div class="flex flex-col overflow-hidden w-full">
         <span
-          class="item-name text-base font-semibold truncate transition-all duration-300 text-slate-900 dark:text-slate-100"></span>
-        <p class="item-quantity text-xs text-slate-500 font-medium"></p>
+          class="item-display text-base font-semibold truncate transition-all duration-300 text-slate-900 dark:text-slate-100"></span>
       </div>
     </li>
   </template>

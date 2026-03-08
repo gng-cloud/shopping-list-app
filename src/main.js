@@ -381,14 +381,12 @@ function renderLists(items) {
   items.forEach(item => {
     const clone = itemTemplate.content.cloneNode(true)
     const li = clone.querySelector('li')
-    const nameSpan = clone.querySelector('.item-name')
+    const nameSpan = clone.querySelector('.item-display')
     const deleteBtn = clone.querySelector('.item-delete')
     const iconContainer = clone.querySelector('.item-icon-container')
     const iconSpan = clone.querySelector('.item-icon')
-    const quantityText = clone.querySelector('.item-quantity')
 
-    nameSpan.textContent = item.name
-    quantityText.textContent = item.quantity || ''
+    nameSpan.textContent = item.quantity ? `${item.name} (${item.quantity})` : item.name
 
     if (item.is_completed) {
       nameSpan.classList.add('line-through', 'text-slate-400', 'dark:text-slate-500')
@@ -406,12 +404,10 @@ function renderLists(items) {
   items.forEach(item => {
     const clone = shoppingItemTemplate.content.cloneNode(true)
     const li = clone.querySelector('li')
-    const nameSpan = clone.querySelector('.item-name')
     const checkbox = clone.querySelector('.item-checkbox')
-    const quantityText = clone.querySelector('.item-quantity')
+    const nameSpan = clone.querySelector('.item-display')
 
-    nameSpan.textContent = item.name
-    quantityText.textContent = item.quantity || ''
+    nameSpan.textContent = item.quantity ? `${item.name} (${item.quantity})` : item.name
     checkbox.checked = item.is_completed
 
     if (item.is_completed) {
