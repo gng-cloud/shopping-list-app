@@ -83,6 +83,9 @@ const ownerActions = document.getElementById('owner-actions')
 const inviteForm = document.getElementById('invite-form')
 const inviteEmail = document.getElementById('invite-email')
 const inviteMsg = document.getElementById('invite-msg')
+const profileForm = document.getElementById('profile-form')
+const profileFirstNameInput = document.getElementById('profile-first-name')
+const profileMsg = document.getElementById('profile-msg')
 const membersList = document.getElementById('members-list')
 const createFamilyForm = document.getElementById('create-family-form')
 const newFamilyName = document.getElementById('new-family-name')
@@ -337,7 +340,19 @@ async function updateProfileFamilyView() {
     ownerActions.classList.add('hidden')
   }
 
+  // Charger le profil de l'utilisateur actuel pour le formulaire
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('first_name')
+    .eq('id', currentUser.id)
+    .single()
+
+  if (profile) {
+    profileFirstNameInput.value = profile.first_name
+  }
+
   inviteMsg.classList.add('hidden')
+  profileMsg.classList.add('hidden')
   await loadFamilyMembers()
 }
 
@@ -381,6 +396,35 @@ async function loadFamilyMembers() {
     `
   }).join('')
 }
+
+profileForm.addEventListener('submit', async (e) => {
+  e.preventDefault()
+  const firstName = profileFirstNameInput.value.trim()
+  if (!firstName) return
+
+  profileMsg.textContent = 'Enregistrement...'
+  profileMsg.className = 'text-xs mt-2 text-primary'
+  profileMsg.classList.remove('hidden')
+
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ first_name: firstName })
+      .eq('id', currentUser.id)
+
+    if (error) throw error
+
+    profileMsg.textContent = 'Prénom mis à jour !'
+    profileMsg.className = 'text-xs mt-2 text-green-500 font-bold'
+
+    // Rafraîchir la liste des membres pour voir le changement partout
+    loadFamilyMembers()
+  } catch (err) {
+    console.error('Erreur MAJ profil', err)
+    profileMsg.textContent = 'Erreur lors de la mise à jour.'
+    profileMsg.className = 'text-xs mt-2 text-red-500'
+  }
+})
 
 inviteForm.addEventListener('submit', async (e) => {
   e.preventDefault()
