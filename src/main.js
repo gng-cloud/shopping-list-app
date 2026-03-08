@@ -895,23 +895,34 @@ async function handleApplyTemplate() {
   const templateId = templateSelect.value
   if (!templateId) return
 
-  if (!confirm("Voulez-vous ajouter les articles de cette liste type à votre liste actuelle ?")) return
+  if (!confirm("Voulez-vous remplacer votre liste actuelle par les articles de cette liste type ?")) return
 
   try {
-    const { data: items, error } = await supabase
+    // 1. Archiver tous les articles actuels non archivés pour cette famille
+    const { error: archiveError } = await supabase
+      .from('shopping_items')
+      .update({ is_archived: true })
+      .eq('family_id', activeFamilyId)
+      .eq('is_archived', false)
+
+    if (archiveError) throw archiveError
+
+    // 2. Récupérer les articles du template
+    const { data: items, error: fetchError } = await supabase
       .from('list_template_items')
       .select('name, quantity')
       .eq('template_id', templateId)
 
-    if (error) throw error
+    if (fetchError) throw fetchError
 
-    // On insère chaque article. La logique d'increment existante s'occupera du reste.
+    // 3. On insère chaque article.
     for (const item of items) {
       await insertItem(item.name, item.quantity)
     }
 
-    alert("Articles ajoutés !")
+    alert("Liste remplacée !")
     loadShoppingItems()
+    loadSuggestions()
   } catch (err) {
     console.error("Erreur application template", err)
     alert("Impossible d'appliquer la liste type.")
