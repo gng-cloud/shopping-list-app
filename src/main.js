@@ -275,6 +275,7 @@ async function loadFamilies() {
   if (currentFamilies.length > 0) {
     activeFamilyId = currentFamilies[0].id
     familySelect.value = activeFamilyId
+    loadShoppingItems()
     updateProfileFamilyView()
     loadSuggestions()
     loadTemplates()
@@ -806,8 +807,14 @@ function setupEventListeners() {
   authToggleBtn.addEventListener('click', toggleAuthMode)
   logoutBtn.addEventListener('click', handleLogout)
 
-  navList.addEventListener('click', () => switchView('view-list'))
-  navShopping.addEventListener('click', () => switchView('view-shopping'))
+  navList.addEventListener('click', () => {
+    switchView('view-list')
+    loadShoppingItems()
+  })
+  navShopping.addEventListener('click', () => {
+    switchView('view-shopping')
+    loadShoppingItems()
+  })
   navProfile.addEventListener('click', () => switchView('view-profile'))
   createFamilyForm.addEventListener('submit', handleCreateFamily)
   clearCompletedBtn.addEventListener('click', archiveCompletedItems)
