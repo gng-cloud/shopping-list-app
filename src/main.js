@@ -173,12 +173,18 @@ async function handleAuthSubmit(e) {
   if (currentAuthMode === 'login') {
     result = await supabase.auth.signInWithPassword({ email, password })
   } else {
-    // On spécifie l'URL de redirection explicitement pour GitHub Pages
+    // Construction explicite de l'URL de redirection pour GitHub Pages
+    // window.location.origin + window.location.pathname assure le sous-dossier /shopping-list-app/
     const redirectTo = window.location.origin + window.location.pathname
+    console.log("Tentative d'inscription avec redirection vers :", redirectTo)
+
     result = await supabase.auth.signUp({
       email,
       password,
-      options: { redirectTo }
+      options: {
+        emailRedirectTo: redirectTo, // Support pour anciennes versions
+        redirectTo: redirectTo        // Version moderne
+      }
     })
   }
 
