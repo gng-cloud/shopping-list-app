@@ -30,6 +30,8 @@ const authSubtitle = document.getElementById('auth-subtitle')
 const authSubmitBtn = document.getElementById('auth-submit-btn')
 const authToggleBtn = document.getElementById('auth-toggle-btn')
 const logoutBtn = document.getElementById('logout-btn')
+const forgotPasswordBtn = document.getElementById('forgot-password-btn')
+const passwordContainer = document.getElementById('password-container')
 
 // Éléments DOM Vues et Navigation
 const viewList = document.getElementById('view-list')
@@ -228,9 +230,8 @@ async function handleAuthSubmit(e) {
   let result
   if (currentAuthMode === 'login') {
     result = await supabase.auth.signInWithPassword({ email, password })
-  } else {
+  } else if (currentAuthMode === 'signup') {
     // Construction explicite de l'URL de redirection pour GitHub Pages
-    // window.location.origin + window.location.pathname assure le sous-dossier /shopping-list-app/
     const redirectTo = window.location.origin + window.location.pathname
     console.log("Tentative d'inscription avec redirection vers :", redirectTo)
 
@@ -238,13 +239,18 @@ async function handleAuthSubmit(e) {
       email,
       password,
       options: {
-        emailRedirectTo: redirectTo, // Support pour anciennes versions
-        redirectTo: redirectTo,        // Version moderne
+        emailRedirectTo: redirectTo,
+        redirectTo: redirectTo,
         data: {
           first_name: firstName || 'Utilisateur'
         }
       }
     })
+  } else if (currentAuthMode === 'forgot-password') {
+    const redirectTo = window.location.origin + window.location.pathname
+    result = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
+  } else if (currentAuthMode === 'update-password') {
+    result = await supabase.auth.updateUser({ password })
   }
 
   const { data, error } = result
@@ -263,14 +269,36 @@ async function handleAuthSubmit(e) {
     authError.textContent = msg
     authError.classList.remove('hidden')
   } else if (currentAuthMode === 'signup' && data.user && !data.session) {
-    // Signup réussi mais confirmation email requise
     alert("Compte créé ! Merci de vérifier tes emails pour valider ton compte avant de te connecter.")
-    toggleAuthMode() // Revenir en mode login
+    toggleAuthMode()
+  } else if (currentAuthMode === 'forgot-password') {
+    alert("Email de réinitialisation envoyé ! Vérifie ta boîte mail.")
+    currentAuthMode = 'login'
+    toggleAuthMode()
+  } else if (currentAuthMode === 'update-password') {
+    alert("Mot de passe mis à jour avec succès !")
+    currentAuthMode = 'login'
+    toggleAuthMode()
   }
 }
 
-function toggleAuthMode() {
-  currentAuthMode = currentAuthMode === 'login' ? 'signup' : 'login'
+function toggleAuthMode(forcedMode) {
+  if (forcedMode) {
+    currentAuthMode = forcedMode
+  } else {
+    if (currentAuthMode === 'login') currentAuthMode = 'signup'
+    else if (currentAuthMode === 'signup') currentAuthMode = 'login'
+    else currentAuthMode = 'login'
+  }
+
+  authError.classList.add('hidden')
+  firstNameContainer.classList.add('hidden')
+  passwordContainer.classList.remove('hidden')
+  emailInput.closest('div').classList.remove('hidden')
+  authToggleBtn.classList.remove('hidden')
+  firstNameInput.required = false
+  emailInput.required = true
+  passwordInput.required = true
 
   if (currentAuthMode === 'signup') {
     authTitle.textContent = "Rejoindre Family Cart"
@@ -279,17 +307,45 @@ function toggleAuthMode() {
     authToggleBtn.textContent = "Déjà un compte ? Se connecter"
     firstNameContainer.classList.remove('hidden')
     firstNameInput.required = true
-  } else {
+    forgotPasswordBtn.classList.add('hidden')
+  } else if (currentAuthMode === 'login') {
     authTitle.textContent = "Family Cart"
     authSubtitle.textContent = "Gérez vos listes ensemble"
     authSubmitBtn.textContent = "Se connecter"
     authToggleBtn.textContent = "Pas de compte ? Créer un compte"
-    firstNameContainer.classList.add('hidden')
-    firstNameInput.required = false
+    forgotPasswordBtn.classList.remove('hidden')
+  } else if (currentAuthMode === 'forgot-password') {
+    authTitle.textContent = "Réinitialisation"
+    authSubtitle.textContent = "Saisis ton email pour recevoir un lien"
+    authSubmitBtn.textContent = "Envoyer le lien"
+    authToggleBtn.textContent = "Retour à la connexion"
+    passwordContainer.classList.add('hidden')
+    passwordInput.required = false
+    forgotPasswordBtn.classList.add('hidden')
+  } else if (currentAuthMode === 'update-password') {
+    authTitle.textContent = "Nouveau mot de passe"
+    authSubtitle.textContent = "Choisis ton nouveau mot de passe"
+    authSubmitBtn.textContent = "Mettre à jour"
+    authToggleBtn.classList.add('hidden')
+    emailInput.closest('div').classList.add('hidden')
+    emailInput.required = false
+    forgotPasswordBtn.classList.add('hidden')
   }
-
-  authError.classList.add('hidden')
 }
+
+forgotPasswordBtn.addEventListener('click', () => toggleAuthMode('forgot-password'))
+
+// Écouter les changements d'état d'auth (pour la récupération de mot de passe)
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'PASSWORD_RECOVERY') {
+    console.log("Événement PASSWORD_RECOVERY détecté")
+    toggleAuthMode('update-password')
+  } else if (event === 'SIGNED_IN') {
+    handleAuthStateChange(session)
+  } else if (event === 'SIGNED_OUT') {
+    handleAuthStateChange(null)
+  }
+})
 
 async function handleLogout() {
   await supabase.auth.signOut()
