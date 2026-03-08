@@ -648,7 +648,7 @@ scanBtn.addEventListener('click', async () => {
   if (isProcessingScan) return
 
   scannerContainer.classList.remove('hidden')
-  scannerStatus.textContent = "Scanning..."
+  scannerStatus.textContent = "Vise le code-barres..."
 
   if (!html5QrCode) {
     html5QrCode = new Html5Qrcode("reader")
@@ -693,11 +693,19 @@ async function onScanSuccess(decodedText) {
   if (isProcessingScan) return
   isProcessingScan = true
 
-  console.log("Code barre détecté:", decodedText)
-  await stopScanner()
-  scannerStatus.textContent = "Recherche du produit..."
+  // Retour haptique (vibration)
+  if (navigator.vibrate) {
+    navigator.vibrate(100)
+  }
 
-  // Show scanner container briefly with new status
+  console.log("Code barre détecté:", decodedText)
+
+  // On arrête la caméra mais on garde l'overlay affiché pour le statut
+  if (html5QrCode && html5QrCode.isScanning) {
+    await html5QrCode.stop()
+  }
+
+  scannerStatus.textContent = "✅ Code détecté ! Recherche du produit..."
   scannerContainer.classList.remove('hidden')
 
   try {
@@ -710,7 +718,7 @@ async function onScanSuccess(decodedText) {
       const qty = newItemQuantity.value.trim()
       await insertItem(fullName, qty)
     } else {
-      alert(`Produit non trouvé pour le code barre: ${decodedText}`)
+      alert(`Produit non trouvé pour le code barre: ${decodedText}.\nTu peux le saisir manuellement.`)
       newItemInput.value = decodedText
     }
   } catch (err) {
@@ -718,8 +726,10 @@ async function onScanSuccess(decodedText) {
     alert("Erreur réseau lors de la recherche du produit.")
   } finally {
     isProcessingScan = false
-    scannerStatus.textContent = "Scanning..."
+    scannerStatus.textContent = "Vise le code-barres..."
     scannerContainer.classList.add('hidden')
+    // Reset scanner instance for next use
+    html5QrCode = null
   }
 }
 
