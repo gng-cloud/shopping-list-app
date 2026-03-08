@@ -16,6 +16,13 @@ let html5QrCode = null
 let isProcessingScan = false // Empêche les scans multiples simultanés
 let currentAuthMode = 'login' // 'login' ou 'signup'
 
+// Vérification manuelle du jeton de récupération dans l'URL (pour GitHub Pages / redirection query params)
+const urlParams = new URLSearchParams(window.location.search)
+if (urlParams.get('type') === 'recovery' || window.location.hash.includes('type=recovery')) {
+  console.log("Flux de récupération détecté via URL")
+  currentAuthMode = 'update-password'
+}
+
 // Éléments DOM Auth
 const authSection = document.getElementById('auth-section')
 const mainSection = document.getElementById('main-section')
