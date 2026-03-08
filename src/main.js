@@ -262,14 +262,10 @@ async function loadFamilies() {
   currentFamilies = data || []
 
   if (currentFamilies.length === 0) {
-    if (retries < maxRetries) {
-      retries++
-      console.log(`Aucune famille trouvée, tentative ${retries}/${maxRetries}...`)
-      setTimeout(loadFamilies, 2000)
-    } else {
-      shoppingList.innerHTML = '<li class="p-6 text-center text-slate-400 font-medium italic">Aucune famille trouvée. Créez-en une sur Supabase !</li>'
-      shoppingModeList.innerHTML = shoppingList.innerHTML
-    }
+    activeFamilyId = null
+    shoppingList.innerHTML = '<li class="p-6 text-center text-slate-400 font-medium italic">Aucune famille trouvée.</li>'
+    shoppingModeList.innerHTML = shoppingList.innerHTML
+    updateProfileFamilyView()
     return
   }
 
@@ -330,20 +326,21 @@ async function handleCreateFamily(e) {
 
 async function updateProfileFamilyView() {
   const activeFamily = currentFamilies.find(f => f.id === activeFamilyId)
-  if (!activeFamily) return
 
-  profileFamilyName.textContent = activeFamily.name
-
-  // Vérifier si l'utilisateur est propriétaire
-  const myMember = activeFamily.family_members.find(m => true) // role est dans l'objet car join !inner
-  const role = myMember ? myMember.role : 'member'
-
-  profileRole.textContent = role === 'owner' ? 'Propriétaire' : 'Membre'
-
-  if (role === 'owner') {
-    ownerActions.classList.remove('hidden')
-  } else {
+  if (!activeFamily) {
+    profileFamilyName.textContent = "Aucune famille"
+    profileRole.textContent = "-"
     ownerActions.classList.add('hidden')
+  } else {
+    profileFamilyName.textContent = activeFamily.name
+    // Vérifier si l'utilisateur est propriétaire
+    const myMember = activeFamily.family_members.find(m => true)
+    const role = myMember ? myMember.role : 'member'
+    profileRole.textContent = role === 'owner' ? 'Propriétaire' : 'Membre'
+    if (role === 'owner') {
+      ownerActions.classList.remove('hidden')
+    } else {
+    }
   }
 
   // Charger le profil de l'utilisateur actuel pour le formulaire
@@ -363,6 +360,12 @@ async function updateProfileFamilyView() {
 }
 
 async function loadFamilyMembers() {
+  if (!activeFamilyId) {
+    membersList.innerHTML = '<li class="p-4 text-center text-slate-400 italic">Aucun membre.</li>'
+    familyMemberCount.textContent = '0 Membre'
+    return
+  }
+
   const { data, error } = await supabase
     .from('family_members')
     .select(`
