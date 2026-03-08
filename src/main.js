@@ -381,6 +381,8 @@ async function loadFamilyMembers() {
 
   familyMemberCount.textContent = `${data.length} Membre${data.length > 1 ? 's' : ''}`
 
+  const isOwner = data.find(m => m.user_id === currentUser.id)?.role === 'owner'
+
   membersList.innerHTML = data.map(m => {
     const isMe = m.user_id === currentUser.id
     const firstName = m.profiles ? m.profiles.first_name : null
@@ -398,9 +400,31 @@ async function loadFamilyMembers() {
           <p class="font-semibold text-slate-900 dark:text-slate-100">${displayName}</p>
           <p class="text-xs text-slate-500">${m.role === 'owner' ? 'Propriétaire' : 'Membre'}</p>
         </div>
+        ${isOwner && !isMe ? `
+          <button onclick="handleRemoveMember('${m.user_id}')" class="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all" title="Supprimer de la famille">
+            <span class="material-symbols-outlined text-lg">person_remove</span>
+          </button>
+        ` : ''}
       </li>
     `
   }).join('')
+}
+
+window.handleRemoveMember = async (userId) => {
+  if (!confirm("Voulez-vous vraiment supprimer ce membre de la famille ?")) return
+
+  const { error } = await supabase
+    .from('family_members')
+    .delete()
+    .eq('family_id', activeFamilyId)
+    .eq('user_id', userId)
+
+  if (error) {
+    console.error('Erreur suppression membre', error)
+    alert("Impossible de supprimer le membre.")
+  } else {
+    loadFamilyMembers()
+  }
 }
 
 profileForm.addEventListener('submit', async (e) => {
