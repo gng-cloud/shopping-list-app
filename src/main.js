@@ -46,6 +46,7 @@ const newItemInput = document.getElementById('new-item-input')
 const shoppingList = document.getElementById('shopping-list')
 const itemTemplate = document.getElementById('item-template')
 const listCount = document.getElementById('list-count')
+const itemSuggestions = document.getElementById('item-suggestions')
 
 // Éléments Scanner
 const scanBtn = document.getElementById('scan-btn')
@@ -61,6 +62,7 @@ const shoppingItemTemplate = document.getElementById('shopping-item-template')
 const shoppingProgressText = document.getElementById('shopping-progress-text')
 const shoppingCountText = document.getElementById('shopping-count-text')
 const shoppingProgressBar = document.getElementById('shopping-progress-bar')
+const clearCompletedBtn = document.getElementById('clear-completed-btn')
 
 // Éléments Profil & Famille (Vue 3)
 const profileEmail = document.getElementById('profile-email')
@@ -204,6 +206,7 @@ async function loadFamilies() {
     familySelect.value = activeFamilyId
     loadShoppingItems()
     updateProfileFamilyView()
+    loadSuggestions()
   }
 }
 
@@ -340,6 +343,7 @@ async function loadShoppingItems() {
     .from('shopping_items')
     .select('*')
     .eq('family_id', activeFamilyId)
+    .eq('is_archived', false)
     .order('created_at', { ascending: true })
 
   if (error) {
@@ -430,12 +434,51 @@ addItemForm.addEventListener('submit', async (e) => {
 
   await insertItem(name)
   newItemInput.value = ''
+  loadSuggestions()
 })
 
+async function loadSuggestions() {
+  if (!activeFamilyId) return
+
+  // On récupère les noms uniques de tous les articles (actifs ou archivés) de cette famille
+  const { data, error } = await supabase
+    .from('shopping_items')
+    .select('name')
+    .eq('family_id', activeFamilyId)
+
+  if (error) {
+    console.error('Erreur suggestions', error)
+    return
+  }
+
+  const uniqueNames = Array.from(new Set(data.map(item => item.name)))
+  itemSuggestions.innerHTML = uniqueNames.map(name => `<option value="${name}">`).join('')
+}
+
 async function insertItem(name) {
+  // Vérifier si un article avec le même nom existe déjà (même archivé)
+  const { data: existing } = await supabase
+    .from('shopping_items')
+    .select('*')
+    .eq('family_id', activeFamilyId)
+    .eq('name', name)
+    .maybeSingle()
+
+  if (existing) {
+    // Si il existe, on le réactive simplement
+    const { error } = await supabase
+      .from('shopping_items')
+      .update({ is_archived: false, is_completed: false })
+      .eq('id', existing.id)
+
+    if (error) console.error('Erreur reactivation', error)
+    else loadShoppingItems()
+    return
+  }
+
   const { error } = await supabase
     .from('shopping_items')
-    .insert([{ name, family_id: activeFamilyId }])
+    .insert([{ name, family_id: activeFamilyId, is_archived: false }])
 
   if (error) {
     console.error('Erreur ajout article', error)
@@ -458,15 +501,34 @@ async function toggleItem(id, is_completed) {
 }
 
 async function deleteItem(id) {
+  // On n'efface plus de la base, on archive
   const { error } = await supabase
     .from('shopping_items')
-    .delete()
+    .update({ is_archived: true })
     .eq('id', id)
 
   if (error) {
-    console.error('Erreur suppression article', error)
+    console.error('Erreur archivage article', error)
   } else {
     loadShoppingItems()
+    loadSuggestions()
+  }
+}
+
+async function archiveCompletedItems() {
+  if (!activeFamilyId) return
+
+  const { error } = await supabase
+    .from('shopping_items')
+    .update({ is_archived: true })
+    .eq('family_id', activeFamilyId)
+    .eq('is_completed', true)
+
+  if (error) {
+    console.error('Erreur vidage liste', error)
+  } else {
+    loadShoppingItems()
+    loadSuggestions()
   }
 }
 
@@ -548,6 +610,7 @@ function setupEventListeners() {
   navShopping.addEventListener('click', () => switchView('view-shopping'))
   navProfile.addEventListener('click', () => switchView('view-profile'))
   createFamilyForm.addEventListener('submit', handleCreateFamily)
+  clearCompletedBtn.addEventListener('click', archiveCompletedItems)
 }
 
 // Lancer l'app
