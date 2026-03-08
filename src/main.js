@@ -363,6 +363,7 @@ function renderLists(items) {
   let totalQty = 0
   let completedQty = 0
   let remainingQty = 0
+  let uncompletedRows = 0
 
   items.forEach(item => {
     const q = parseQuantity(item.quantity)
@@ -372,10 +373,16 @@ function renderLists(items) {
       completedQty += val
     } else {
       remainingQty += val
+      uncompletedRows++
     }
   })
 
-  listCount.textContent = `${remainingQty} article${remainingQty > 1 ? 's' : ''}`
+  // Affichage du compteur : "X articles" (et si quantité > lignes, on précise le total des unités)
+  let countText = `${uncompletedRows} article${uncompletedRows > 1 ? 's' : ''}`
+  if (remainingQty > uncompletedRows) {
+    countText += ` (${remainingQty} au total)`
+  }
+  listCount.textContent = countText
 
   const progressPercent = totalQty === 0 ? 0 : Math.round((completedQty / totalQty) * 100)
 
@@ -494,14 +501,22 @@ async function insertItem(name, quantity = '') {
     const oldQty = parseQuantity(existing.quantity)
     const newAddQty = parseQuantity(quantity)
 
-    let updatedQty = quantity
-    if (oldQty.val !== null && newAddQty.val !== null) {
-      // Si les unités sont compatibles (identiques ou la nouvelle est vide)
-      if (oldQty.unit === newAddQty.unit || !newAddQty.unit) {
-        const sum = oldQty.val + newAddQty.val
-        updatedQty = oldQty.unit ? `${sum} ${oldQty.unit}` : `${sum}`
+    let updatedQty = quantity || '1'
+
+    // On n'incrémente que si l'article est actif et NON coché
+    if (!existing.is_archived && !existing.is_completed) {
+      const oldQty = parseQuantity(existing.quantity)
+      const newAddQty = parseQuantity(quantity)
+
+      if (oldQty.val !== null && newAddQty.val !== null) {
+        // Si les unités sont compatibles (identiques ou la nouvelle est vide)
+        if (oldQty.unit === newAddQty.unit || !newAddQty.unit) {
+          const sum = oldQty.val + newAddQty.val
+          updatedQty = oldQty.unit ? `${sum} ${oldQty.unit}` : `${sum}`
+        }
       }
     }
+    // Sinon (si c'était archivé ou déjà coché), on repart de la valeur saisie (ou 1)
 
     const { error } = await supabase
       .from('shopping_items')
