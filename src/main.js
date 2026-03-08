@@ -11,6 +11,7 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey)
 let currentUser = null
 let currentFamilies = []
 let activeFamilyId = null
+let familyMembersSubscription = null
 let html5QrCode = null
 let isProcessingScan = false // Empêche les scans multiples simultanés
 let currentAuthMode = 'login' // 'login' ou 'signup'
@@ -160,12 +161,40 @@ function handleAuthStateChange(session) {
     switchView('view-list') // Vue par défaut
     loadFamilies()
     loadInvitations()
+    setupRealtimeSubscription()
   } else {
+    if (familyMembersSubscription) {
+      supabase.removeChannel(familyMembersSubscription)
+      familyMembersSubscription = null
+    }
     authSection.classList.remove('hidden')
     mainSection.classList.add('hidden')
     // S'assurer de cacher les vues principales
     views.forEach(({ view }) => view.classList.add('hidden'))
   }
+}
+
+function setupRealtimeSubscription() {
+  if (familyMembersSubscription) {
+    supabase.removeChannel(familyMembersSubscription)
+  }
+
+  familyMembersSubscription = supabase
+    .channel('family-changes')
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'family_members'
+      },
+      () => {
+        loadInvitations()
+        loadFamilies()
+        loadFamilyMembers()
+      }
+    )
+    .subscribe()
 }
 
 async function handleAuthSubmit(e) {
