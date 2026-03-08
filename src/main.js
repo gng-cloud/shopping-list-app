@@ -1202,6 +1202,25 @@ async function handleSaveTemplate() {
   if (!targetTemplateId) {
     name = prompt("Nom de cette nouvelle liste type (ex: Hebdo, Barbecue...) :")
     if (!name) return
+
+    // Vérifier si un template avec le même nom existe déjà pour cette famille
+    const { data: existingTemplates, error: checkError } = await supabase
+      .from('list_templates')
+      .select('id, name')
+      .eq('family_id', activeFamilyId)
+      .ilike('name', name)
+
+    if (checkError) {
+      console.error("Erreur vérification doublon", checkError)
+    } else if (existingTemplates && existingTemplates.length > 0) {
+      const existing = existingTemplates[0]
+      const confirmUpdate = confirm(`Une liste type nommée "${existing.name}" existe déjà.\nVoulez-vous la mettre à jour avec le contenu actuel ?`)
+      if (confirmUpdate) {
+        targetTemplateId = existing.id
+      } else {
+        return // Annuler l'opération
+      }
+    }
   }
 
   try {
