@@ -359,14 +359,25 @@ function renderLists(items) {
   shoppingList.innerHTML = ''
   shoppingModeList.innerHTML = ''
 
-  listCount.textContent = `${items.length} article${items.length > 1 ? 's' : ''}`
+  // Calculer le total des quantités
+  let totalQty = 0
+  let completedQty = 0
 
-  const completedItems = items.filter(item => item.is_completed)
-  const totalItems = items.length
-  const progressPercent = totalItems === 0 ? 0 : Math.round((completedItems.length / totalItems) * 100)
+  items.forEach(item => {
+    const q = parseQuantity(item.quantity)
+    const val = q.val !== null ? q.val : 1 // Si pas de nombre, compte comme 1 article
+    totalQty += val
+    if (item.is_completed) {
+      completedQty += val
+    }
+  })
+
+  listCount.textContent = `${totalQty} article${totalQty > 1 ? 's' : ''}`
+
+  const progressPercent = totalQty === 0 ? 0 : Math.round((completedQty / totalQty) * 100)
 
   shoppingProgressText.textContent = `${progressPercent}%`
-  shoppingCountText.textContent = `${completedItems.length} sur ${totalItems} article${totalItems > 1 ? 's' : ''}`
+  shoppingCountText.textContent = `${completedQty} sur ${totalQty} article${totalQty > 1 ? 's' : ''}`
   shoppingProgressBar.style.width = `${progressPercent}%`
 
 
