@@ -185,7 +185,7 @@
             <span id="list-count" class="text-xs font-medium bg-slate-200 dark:bg-slate-800 px-2 py-1 rounded-full">0
               article</span>
           </div>
-          <ul id="shopping-list" class="space-y-3">
+          <ul id="shopping-list" class="space-y-2">
             <li class="p-6 text-center text-slate-400 font-medium italic animate-pulse">Chargement...</li>
           </ul>
         </section>
@@ -226,7 +226,7 @@
               class="text-lg font-bold font-display uppercase tracking-wider text-slate-500 dark:text-slate-400 text-xs">
               Articles en rayons</h3>
           </div>
-          <ul id="shopping-mode-list" class="space-y-3">
+          <ul id="shopping-mode-list" class="space-y-2">
             <!-- Populated dynamically by JS reusing the data -->
             <li class="p-6 text-center text-slate-400 font-medium italic">Chargement...</li>
           </ul>
@@ -411,7 +411,7 @@
   <template id="item-template">
     <li
       class="item-row flex flex-col bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 group transition-all duration-300">
-      <div class="flex items-center justify-between p-4">
+      <div class="flex items-center justify-between py-2 px-4">
         <div class="flex items-center gap-3 overflow-hidden flex-1">
           <div
             class="size-10 shrink-0 rounded-lg bg-background-light dark:bg-background-dark flex items-center justify-center item-icon-container">
@@ -434,7 +434,7 @@
   <!-- Template for Shopping Mode Item -->
   <template id="shopping-item-template">
     <li
-      class="item-row flex items-center gap-4 p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm active:scale-[0.98] transition-transform cursor-pointer">
+      class="item-row flex items-center gap-4 py-2 px-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm active:scale-[0.98] transition-transform cursor-pointer">
       <input type="checkbox"
         class="item-checkbox checkbox-custom h-7 w-7 rounded-lg border-2 border-primary/30 bg-transparent text-primary focus:ring-primary focus:ring-offset-0 checked:bg-primary checked:border-primary cursor-pointer transition-colors" />
       <div class="flex flex-col overflow-hidden w-full">

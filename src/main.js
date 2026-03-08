@@ -523,7 +523,7 @@ async function loadFamilyMembers() {
     const avatar = 'https://lh3.googleusercontent.com/aida-public/AB6AXuBlRNUWArXF3aibHSDkdlM4k_NA8ruaGZ5eWwCeYhRdO1Q7hXPN7HSGByo4meLJdtlZ6RMvny5_b-TdJXnuM23F8OEQqqNrphw302FXyo_6e56pRT4Eg4S4JXDDAg7bGDXsy2vjIPz_cNk5sApr_46KZAagDFa4fmI6UEoAb_tx-7DUG2urCUqQG6Zl86t5qFCdeue4fRA8BbeT1v15Tzni8W94EhfUiRyzl4ErlHGxApSdL8x37U1BPRy9hMYYJ3t6b1fLpzxjUS8'
 
     return `
-      <li class="flex items-center gap-4 p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+      <li class="flex items-center gap-4 py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
         <img alt="Membre" class="w-10 h-10 rounded-full object-cover" src="${isMe ? 'https://lh3.googleusercontent.com/aida-public/AB6AXuDlHpcljmtsN_fW-1my03yBu9MzDR-J8LVpSoBRx9ufvZ8lzJ4Ahru48elZ0-Q85oZStJpxwev2_JmgK5DBgusBdoE_l-mNaWT_vcQGrZeoS6rqIk6UUAbA-ZYa7LjBZZiOke-vLLDg9BG6fdm6xrmooZzgAPegLmQ4iWTSwca3GuwgDQVh1XhHiz9vjPj17zTS5LJnZZqozoyxsYAggz3k54U1szQA6t75w7ptlmDEOqvvtcYQR-QG9YPZk0HS-y1pXm5b-VSPoz4' : avatar}"/>
         <div class="flex-1">
           <p class="font-semibold text-slate-900 dark:text-slate-100">${displayName}</p>
