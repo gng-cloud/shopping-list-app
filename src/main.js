@@ -86,6 +86,8 @@ const inviteMsg = document.getElementById('invite-msg')
 const profileForm = document.getElementById('profile-form')
 const profileFirstNameInput = document.getElementById('profile-first-name')
 const profileMsg = document.getElementById('profile-msg')
+const invitationsSection = document.getElementById('invitations-section')
+const invitationsList = document.getElementById('invitations-list')
 const membersList = document.getElementById('members-list')
 const createFamilyForm = document.getElementById('create-family-form')
 const newFamilyName = document.getElementById('new-family-name')
@@ -158,6 +160,7 @@ function handleAuthStateChange(session) {
     profileEmail.textContent = currentUser.email
     switchView('view-list') // Vue par défaut
     loadFamilies()
+    loadInvitations()
   } else {
     authSection.classList.remove('hidden')
     mainSection.classList.add('hidden')
@@ -246,7 +249,9 @@ const maxRetries = 5
 async function loadFamilies() {
   const { data, error } = await supabase
     .from('families')
-    .select('*, family_members!inner(role)')
+    .select('*, family_members!inner(role, status)')
+    .eq('family_members.user_id', currentUser.id)
+    .eq('family_members.status', 'accepted')
 
   if (error) {
     console.error('Erreur lors du chargement des familles', error)
@@ -426,6 +431,66 @@ profileForm.addEventListener('submit', async (e) => {
     profileMsg.className = 'text-xs mt-2 text-red-500'
   }
 })
+
+async function loadInvitations() {
+  if (!currentUser) return
+
+  const { data, error } = await supabase
+    .from('family_members')
+    .select('id, family_id, families(name)')
+    .eq('user_id', currentUser.id)
+    .eq('status', 'pending')
+
+  if (error || !data || data.length === 0) {
+    invitationsSection.classList.add('hidden')
+    return
+  }
+
+  invitationsSection.classList.remove('hidden')
+  invitationsList.innerHTML = data.map(inv => `
+    <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
+      <div class="flex flex-col">
+        <span class="text-xs font-semibold text-slate-500 uppercase">Invitation pour</span>
+        <span class="text-sm font-bold text-slate-900 dark:text-white">${inv.families.name}</span>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="handleAcceptInvitation('${inv.id}')" class="bg-primary/10 hover:bg-primary/20 text-primary font-bold px-3 py-2 rounded-xl text-xs transition-all">
+          Accepter
+        </button>
+        <button onclick="handleDeclineInvitation('${inv.id}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 font-bold px-3 py-2 rounded-xl text-xs transition-all">
+          Refuser
+        </button>
+      </div>
+    </div>
+  `).join('')
+}
+
+window.handleAcceptInvitation = async (invitationId) => {
+  const { error } = await supabase
+    .from('family_members')
+    .update({ status: 'accepted' })
+    .eq('id', invitationId)
+
+  if (error) {
+    alert("Impossible d'accepter l'invitation.")
+  } else {
+    loadInvitations()
+    loadFamilies()
+  }
+}
+
+window.handleDeclineInvitation = async (invitationId) => {
+  const { error } = await supabase
+    .from('family_members')
+    .delete()
+    .eq('id', invitationId)
+
+  if (error) {
+    alert("Impossible de refuser l'invitation.")
+  } else {
+    loadInvitations()
+  }
+}
 
 inviteForm.addEventListener('submit', async (e) => {
   e.preventDefault()
