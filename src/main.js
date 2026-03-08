@@ -96,7 +96,28 @@ async function init() {
   })
 
   handleAuthStateChange(session)
+  checkAuthErrors()
   setupEventListeners()
+}
+
+/**
+ * Vérifie si des erreurs d'authentification sont présentes dans le fragment URL (#error=...)
+ * Cela arrive lors d'une redirection après un lien de confirmation expiré ou invalide.
+ */
+function checkAuthErrors() {
+  const hash = window.location.hash
+  if (hash && hash.includes('error=')) {
+    // Transformer le fragment en paramètres lisibles
+    const params = new URLSearchParams(hash.substring(1)) // Retirer le '#'
+    const errorMsg = params.get('error_description') || params.get('error')
+
+    if (errorMsg) {
+      authError.textContent = decodeURIComponent(errorMsg).replace(/\+/g, ' ')
+      authError.classList.remove('hidden')
+      // Nettoyer l'URL pour éviter de ré-afficher l'erreur au rafraîchissement
+      window.history.replaceState(null, null, window.location.pathname)
+    }
+  }
 }
 
 // --- Navigation entre les vues ---
