@@ -362,6 +362,7 @@ function renderLists(items) {
   // Calculer le total des quantités
   let totalQty = 0
   let completedQty = 0
+  let remainingQty = 0
 
   items.forEach(item => {
     const q = parseQuantity(item.quantity)
@@ -369,10 +370,12 @@ function renderLists(items) {
     totalQty += val
     if (item.is_completed) {
       completedQty += val
+    } else {
+      remainingQty += val
     }
   })
 
-  listCount.textContent = `${totalQty} article${totalQty > 1 ? 's' : ''}`
+  listCount.textContent = `${remainingQty} article${remainingQty > 1 ? 's' : ''}`
 
   const progressPercent = totalQty === 0 ? 0 : Math.round((completedQty / totalQty) * 100)
 
