@@ -733,6 +733,11 @@ async function loadShoppingItems() {
     return
   }
 
+  const listContainer = viewList.querySelector('main')
+  const shoppingContainer = viewShopping.querySelector('main')
+  const scrollPosList = listContainer ? listContainer.scrollTop : 0
+  const scrollPosShopping = shoppingContainer ? shoppingContainer.scrollTop : 0
+
   const loadingHtml = '<li class="p-6 text-center text-slate-400 font-medium italic animate-pulse">Chargement des articles...</li>'
   shoppingList.innerHTML = loadingHtml
   shoppingModeList.innerHTML = loadingHtml
@@ -750,6 +755,10 @@ async function loadShoppingItems() {
   }
 
   renderLists(data)
+
+  // Restaurer la position de défilement
+  if (listContainer) listContainer.scrollTop = scrollPosList
+  if (shoppingContainer) shoppingContainer.scrollTop = scrollPosShopping
 }
 
 function renderLists(items) {
