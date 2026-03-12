@@ -1332,10 +1332,20 @@ async function handleApplyTemplate() {
 
     if (fetchError) throw fetchError
 
-    // 3. On insère chaque article.
-    for (const item of items) {
-      await insertItem(item.name, item.quantity)
-    }
+    // 3. Préparer les articles pour l'insertion groupée
+    const newItems = items.map(item => ({
+      name: item.name,
+      quantity: item.quantity,
+      family_id: activeFamilyId,
+      is_archived: false,
+      is_completed: false
+    }))
+
+    const { error: insertError } = await supabase
+      .from('shopping_items')
+      .insert(newItems)
+
+    if (insertError) throw insertError
 
     alert("Liste remplacée !")
     loadShoppingItems()
