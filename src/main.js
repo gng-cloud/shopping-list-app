@@ -737,10 +737,14 @@ async function loadShoppingItems() {
   const shoppingContainer = viewShopping.querySelector('main')
   const scrollPosList = listContainer ? listContainer.scrollTop : 0
   const scrollPosShopping = shoppingContainer ? shoppingContainer.scrollTop : 0
+  const scrollPosWindow = window.scrollY
 
-  const loadingHtml = '<li class="p-6 text-center text-slate-400 font-medium italic animate-pulse">Chargement des articles...</li>'
-  shoppingList.innerHTML = loadingHtml
-  shoppingModeList.innerHTML = loadingHtml
+  // On n'affiche le chargement que si la liste est vide (première charge)
+  if (shoppingList.children.length === 0 || shoppingList.querySelector('.animate-pulse')) {
+    const loadingHtml = '<li class="p-6 text-center text-slate-400 font-medium italic animate-pulse">Chargement des articles...</li>'
+    shoppingList.innerHTML = loadingHtml
+    shoppingModeList.innerHTML = loadingHtml
+  }
 
   const { data, error } = await supabase
     .from('shopping_items')
@@ -756,14 +760,16 @@ async function loadShoppingItems() {
 
   renderLists(data)
 
-  // Restaurer la position de défilement
+  // Restaurer la position de défilement (Conteneurs + Fenêtre)
   if (listContainer) listContainer.scrollTop = scrollPosList
   if (shoppingContainer) shoppingContainer.scrollTop = scrollPosShopping
+  window.scrollTo(0, scrollPosWindow)
 }
 
 function renderLists(items) {
-  shoppingList.innerHTML = ''
-  shoppingModeList.innerHTML = ''
+  // Créer des fragments pour éviter les reflows multiples et le clignotement
+  const frag1 = document.createDocumentFragment()
+  const frag2 = document.createDocumentFragment()
 
   // Calculer le total des quantités
   let totalQty = 0
@@ -773,7 +779,7 @@ function renderLists(items) {
 
   items.forEach(item => {
     const q = parseQuantity(item.quantity)
-    const val = q.val !== null ? q.val : 1 // Si pas de nombre, compte comme 1 article
+    const val = q.val !== null ? q.val : 1
     totalQty += val
     if (item.is_completed) {
       completedQty += val
@@ -783,7 +789,6 @@ function renderLists(items) {
     }
   })
 
-  // Affichage du compteur : "X articles" (et si quantité > lignes, on précise le total des unités)
   let countText = `${uncompletedRows} article${uncompletedRows > 1 ? 's' : ''}`
   if (remainingQty > uncompletedRows) {
     countText += ` (${remainingQty} au total)`
@@ -791,11 +796,9 @@ function renderLists(items) {
   listCount.textContent = countText
 
   const progressPercent = totalQty === 0 ? 0 : Math.round((completedQty / totalQty) * 100)
-
   shoppingProgressText.textContent = `${progressPercent}%`
   shoppingCountText.textContent = `${completedQty} sur ${totalQty} article${totalQty > 1 ? 's' : ''}`
   shoppingProgressBar.style.width = `${progressPercent}%`
-
 
   if (items.length === 0) {
     const emptyHtml = '<li class="p-6 text-center text-slate-400 font-medium italic">Votre liste est vide. Ajoutez quelque chose ! ✨</li>'
@@ -804,7 +807,7 @@ function renderLists(items) {
     return
   }
 
-  // Rendu Vue 1 (Préparation - On affiche tout)
+  // Rendu Vue 1
   items.forEach(item => {
     const clone = itemTemplate.content.cloneNode(true)
     const li = clone.querySelector('li')
@@ -824,10 +827,10 @@ function renderLists(items) {
     }
 
     deleteBtn.addEventListener('click', () => deleteItem(item.id))
-    shoppingList.appendChild(li)
+    frag1.appendChild(li)
   })
 
-  // Rendu Vue 2 (Mode Courses - Style avec Checkbox)
+  // Rendu Vue 2
   items.forEach(item => {
     const clone = shoppingItemTemplate.content.cloneNode(true)
     const li = clone.querySelector('li')
@@ -843,7 +846,6 @@ function renderLists(items) {
 
     checkbox.addEventListener('change', () => toggleItem(item.id, checkbox.checked))
 
-    // Permet de cliquer sur la ligne entière pour cocher
     li.addEventListener('click', (e) => {
       if (e.target !== checkbox) {
         checkbox.checked = !checkbox.checked
@@ -851,8 +853,14 @@ function renderLists(items) {
       }
     })
 
-    shoppingModeList.appendChild(li)
+    frag2.appendChild(li)
   })
+
+  // Appliquer les changements d'un coup
+  shoppingList.innerHTML = ''
+  shoppingList.appendChild(frag1)
+  shoppingModeList.innerHTML = ''
+  shoppingModeList.appendChild(frag2)
 }
 
 addItemForm.addEventListener('submit', async (e) => {
