@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { Html5Qrcode } from 'html5-qrcode'
+import Sortable from 'sortablejs'
 import './style.css'
 
 // Initialiser Supabase
@@ -124,6 +125,63 @@ async function init() {
   handleAuthStateChange(session)
   checkAuthErrors()
   setupEventListeners()
+  initSortable()
+}
+
+function initSortable() {
+  new Sortable(shoppingList, {
+    handle: '.drag-handle',
+    animation: 150,
+    ghostClass: 'opacity-50',
+    onEnd: async (evt) => {
+      const itemId = evt.item.dataset.id
+      const newIndex = evt.newIndex
+      const oldIndex = evt.oldIndex
+
+      if (newIndex === oldIndex) return
+
+      await updateItemOrder(itemId, newIndex)
+    }
+  })
+}
+
+async function updateItemOrder(itemId, newIndex) {
+  // Récupérer tous les items affichés pour calculer le nouveau sort_order
+  const items = Array.from(shoppingList.querySelectorAll('li.item-row'))
+  
+  let newSortOrder
+  if (items.length === 1) {
+    newSortOrder = 1000
+  } else if (newIndex === 0) {
+    // Premier élément : moitié du sort_order du suivant
+    const nextItem = items[1]
+    const nextOrder = parseFloat(nextItem.dataset.sortOrder)
+    newSortOrder = nextOrder / 2
+  } else if (newIndex === items.length - 1) {
+    // Dernier élément : sort_order du précédent + 1000
+    const prevItem = items[newIndex - 1]
+    const prevOrder = parseFloat(prevItem.dataset.sortOrder)
+    newSortOrder = prevOrder + 1000
+  } else {
+    // Entre deux : moyenne du précédent et du suivant
+    const prevOrder = parseFloat(items[newIndex - 1].dataset.sortOrder)
+    const nextOrder = parseFloat(items[newIndex + 1].dataset.sortOrder)
+    newSortOrder = (prevOrder + nextOrder) / 2
+  }
+
+  // Mettre à jour en base
+  const { error } = await supabase
+    .from('shopping_items')
+    .update({ sort_order: newSortOrder })
+    .eq('id', itemId)
+
+  if (error) {
+    console.error('Erreur MAJ ordre', error)
+    loadShoppingItems() // Recharger en cas d'erreur pour remettre l'ordre correct
+  } else {
+    // Mettre à jour l'attribut data pour les futurs calculs
+    items[newIndex].dataset.sortOrder = newSortOrder
+  }
 }
 
 /**
@@ -751,6 +809,7 @@ async function loadShoppingItems() {
     .select('*')
     .eq('family_id', activeFamilyId)
     .eq('is_archived', false)
+    .order('sort_order', { ascending: true })
     .order('created_at', { ascending: true })
 
   if (error) {
@@ -811,6 +870,8 @@ function renderLists(items) {
   items.forEach(item => {
     const clone = itemTemplate.content.cloneNode(true)
     const li = clone.querySelector('li')
+    li.dataset.id = item.id
+    li.dataset.sortOrder = item.sort_order || 0
     const nameSpan = clone.querySelector('.item-display')
     const deleteBtn = clone.querySelector('.item-delete')
     const iconContainer = clone.querySelector('.item-icon-container')
@@ -989,9 +1050,21 @@ async function insertItem(name, quantity = '') {
     return
   }
 
+  // Calculer le prochain sort_order (max + 1000)
+  const maxOrder = familyItems && familyItems.length > 0
+    ? Math.max(...familyItems.map(it => it.sort_order || 0))
+    : 0
+  const nextSortOrder = maxOrder + 1000
+
   const { error } = await supabase
     .from('shopping_items')
-    .insert([{ name, quantity, family_id: activeFamilyId, is_archived: false }])
+    .insert([{ 
+      name, 
+      quantity, 
+      family_id: activeFamilyId, 
+      is_archived: false,
+      sort_order: nextSortOrder
+    }])
 
   if (error) {
     console.error('Erreur ajout article', error)
@@ -1333,12 +1406,13 @@ async function handleApplyTemplate() {
     if (fetchError) throw fetchError
 
     // 3. Préparer les articles pour l'insertion groupée
-    const newItems = items.map(item => ({
+    const newItems = items.map((item, index) => ({
       name: item.name,
       quantity: item.quantity,
       family_id: activeFamilyId,
       is_archived: false,
-      is_completed: false
+      is_completed: false,
+      sort_order: (index + 1) * 1000
     }))
 
     const { error: insertError } = await supabase
