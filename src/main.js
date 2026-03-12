@@ -1266,13 +1266,14 @@ async function loadTemplates() {
 async function handleSaveTemplate() {
   if (!activeFamilyId) return
 
-  // 1. Récupérer les articles actifs (avec leur ordre)
+  // 1. Récupérer les articles actifs (avec leur ordre + tie-breaker created_at)
   const { data: items, error: fetchError } = await supabase
     .from('shopping_items')
     .select('name, quantity, sort_order')
     .eq('family_id', activeFamilyId)
     .eq('is_archived', false)
     .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: true })
 
   if (fetchError || !items || items.length === 0) {
     alert("La liste est vide ou inaccessible.")
@@ -1335,12 +1336,12 @@ async function handleSaveTemplate() {
       if (deleteError) throw deleteError
     }
 
-    // Créer les items du template
-    const templateItems = items.map(it => ({
+    // Créer les items du template avec un ordre recalculé pour être propre
+    const templateItems = items.map((it, index) => ({
       template_id: targetTemplateId,
       name: it.name,
       quantity: it.quantity,
-      sort_order: it.sort_order
+      sort_order: (index + 1) * 1000
     }))
 
     const { error: itemsError } = await supabase
@@ -1399,12 +1400,13 @@ async function handleApplyTemplate() {
 
     if (archiveError) throw archiveError
 
-    // 2. Récupérer les articles du template (dans le bon ordre)
+    // 2. Récupérer les articles du template (dans le bon ordre + tie-breaker id)
     const { data: items, error: fetchError } = await supabase
       .from('list_template_items')
       .select('name, quantity, sort_order')
       .eq('template_id', templateId)
       .order('sort_order', { ascending: true })
+      .order('id', { ascending: true })
 
     if (fetchError) throw fetchError
 
