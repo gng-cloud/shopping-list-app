@@ -206,6 +206,7 @@ function checkAuthErrors() {
 
 // --- Navigation entre les vues ---
 function switchView(targetViewId) {
+  localStorage.setItem('activeView', targetViewId)
   views.forEach(({ view, nav }) => {
     if (view.id === targetViewId) {
       view.classList.remove('hidden')
@@ -234,7 +235,10 @@ function handleAuthStateChange(session) {
     authSection.classList.add('hidden')
     mainSection.classList.remove('hidden')
     profileEmail.textContent = currentUser.email
-    switchView('view-list') // Vue par défaut
+    
+    const savedView = localStorage.getItem('activeView') || 'view-list'
+    switchView(savedView)
+    
     loadFamilies()
     loadInvitations()
     setupRealtimeSubscription()
