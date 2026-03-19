@@ -1009,7 +1009,7 @@ async function insertItem(name, quantity = '') {
     console.error('Erreur recherche doublons', fetchError)
   }
 
-  const existing = (familyItems || []).find(it => {
+  const matches = (familyItems || []).filter(it => {
     const itName = it.name.trim().toLowerCase()
     return itName === searchName ||
       itName === singular ||
@@ -1017,6 +1017,11 @@ async function insertItem(name, quantity = '') {
       (itName.endsWith('s') && itName.slice(0, -1) === searchName) ||
       (searchName.endsWith('s') && searchName.slice(0, -1) === itName)
   })
+
+  // On privilégie un item actif et non complété, puis un item actif, et enfin un item archivé
+  const existing = matches.find(it => !it.is_archived && !it.is_completed)
+                || matches.find(it => !it.is_archived)
+                || matches[0]
 
   if (existing) {
     // Calculer la nouvelle quantité par incrémentation
