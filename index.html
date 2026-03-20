@@ -12,8 +12,8 @@
   class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-display">
   <!-- AUTH SECTION (keep structure, update styles) -->
   <section id="auth-section"
-    class="flex-1 flex flex-col justify-center items-center px-4 py-8 animate-slide-up bg-white dark:bg-slate-900 m-4 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800">
-    <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-6">
+    class="flex-1 flex flex-col justify-center items-center px-6 py-10 animate-slide-up-fade glass-panel m-4 rounded-[2rem] shadow-2xl border border-white/50 dark:border-slate-700/30">
+    <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 shadow-inner">
       <span class="material-symbols-outlined text-primary text-3xl">shopping_cart</span>
     </div>
     <h1 id="auth-title" class="text-3xl font-bold text-center mb-2">Family Cart</h1>
@@ -23,19 +23,19 @@
       <div id="first-name-container" class="hidden">
         <label class="block text-sm font-semibold mb-1 text-slate-700 dark:text-slate-300">Prénom</label>
         <input type="text" id="first-name"
-          class="block w-full rounded-xl px-4 py-3 bg-background-light dark:bg-background-dark border-transparent focus:border-primary focus:ring-primary outline-none"
+          class="block w-full rounded-2xl px-5 py-3.5 bg-background-light/50 dark:bg-background-dark/50 border border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
           placeholder="Ton prénom">
       </div>
       <div>
         <label class="block text-sm font-semibold mb-1 text-slate-700 dark:text-slate-300">Email</label>
         <input type="email" id="email" required
-          class="block w-full rounded-xl px-4 py-3 bg-background-light dark:bg-background-dark border-transparent focus:border-primary focus:ring-primary outline-none"
+          class="block w-full rounded-2xl px-5 py-3.5 bg-background-light/50 dark:bg-background-dark/50 border border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
           placeholder="vous@exemple.com">
       </div>
       <div id="password-container">
         <label class="block text-sm font-semibold mb-1 text-slate-700 dark:text-slate-300">Mot de passe</label>
         <input type="password" id="password" required
-          class="block w-full rounded-xl px-4 py-3 bg-background-light dark:bg-background-dark border-transparent focus:border-primary focus:ring-primary outline-none"
+          class="block w-full rounded-2xl px-5 py-3.5 bg-background-light/50 dark:bg-background-dark/50 border border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
           placeholder="••••••••">
         <div class="text-right mt-1">
           <button type="button" id="forgot-password-btn" class="text-xs text-primary hover:underline cursor-pointer">
@@ -48,7 +48,7 @@
 
       <div class="pt-2">
         <button type="submit" id="auth-submit-btn"
-          class="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold px-4 py-3.5 rounded-xl transition-colors cursor-pointer">
+          class="w-full bg-primary hover:bg-primary-dark text-white font-bold px-4 py-4 rounded-2xl transition-all active:scale-[0.98] shadow-lg shadow-primary/30 cursor-pointer">
           Se connecter
         </button>
       </div>
@@ -62,13 +62,13 @@
   </section>
 
   <!-- MAIN APP SECTION -->
-  <section id="main-section" class="hidden flex-1 flex flex-col w-full h-full animate-slide-up relative">
+  <section id="main-section" class="hidden flex-1 flex flex-col w-full h-full animate-slide-up-fade relative">
 
     <!-- VIEW: MA LISTE (Screen 1) -->
     <div id="view-list" class="flex-1 flex flex-col w-full h-full relative">
       <!-- Header -->
       <header
-        class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-4 flex items-center gap-4 flex-row w-full">
+        class="sticky top-0 z-20 glass-panel border-b border-slate-200/50 dark:border-slate-800/50 px-5 py-4 flex items-center gap-4 flex-row w-full transition-all">
         <!-- Family selector used to be here, let's put it here or in Profile. Let's keep it here for quick switch -->
         <div class="relative flex-1">
           <select id="family-select"
@@ -109,7 +109,7 @@
             <div class="flex flex-1 gap-2 items-center">
               <div class="relative flex-1 group">
                 <input type="text" id="new-item-input" required autocomplete="off"
-                  class="w-full h-12 pl-4 pr-12 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all text-base placeholder-slate-400 outline-none"
+                  class="w-full h-14 pl-5 pr-12 rounded-2xl border border-slate-200 dark:border-slate-700/50 bg-white/80 dark:bg-slate-800/80 focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-base placeholder-slate-400 outline-none shadow-sm"
                   placeholder="Ex: Pommes, Lait..." />
                 <!-- Scan Button -->
                 <button type="button" id="scan-btn"
@@ -122,10 +122,10 @@
                 </div>
               </div>
               <input type="text" id="new-item-quantity"
-                class="w-20 h-12 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all text-base placeholder-slate-400 outline-none text-center"
+                class="w-20 h-14 px-3 rounded-2xl border border-slate-200 dark:border-slate-700/50 bg-white/80 dark:bg-slate-800/80 focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-base placeholder-slate-400 outline-none text-center shadow-sm"
                 placeholder="Qté" />
               <button type="submit"
-                class="shrink-0 size-12 flex items-center justify-center bg-primary text-background-dark rounded-xl hover:bg-primary/90 transition-all active:scale-95 shadow-md shadow-primary/20 cursor-pointer">
+                class="shrink-0 size-14 flex items-center justify-center bg-primary text-white rounded-2xl hover:bg-primary-dark transition-all active:scale-[0.95] shadow-lg shadow-primary/30 cursor-pointer">
                 <span class="material-symbols-outlined text-2xl">add</span>
               </button>
             </div>
@@ -146,17 +146,17 @@
         </div>
 
         <!-- Templates Section -->
-        <section class="mt-4 px-4">
+        <section class="mt-2 px-4">
           <div
-            class="bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-800">
+            class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-3xl p-5 shadow-sm border border-slate-100 dark:border-slate-800 transition-all">
             <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Listes Types</h2>
             <div class="flex gap-2">
               <select id="template-select"
-                class="flex-1 bg-slate-50 dark:bg-slate-800 border-none rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                class="flex-1 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl px-4 py-3 text-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all">
                 <option value="">Charger une liste...</option>
               </select>
               <button id="apply-template-btn"
-                class="bg-primary text-background-dark font-bold p-2 rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100"
+                class="bg-primary hover:bg-primary-dark text-white font-bold p-3 rounded-2xl transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 shadow-md shadow-primary/20"
                 title="Appliquer cette liste">
                 <span class="material-symbols-outlined text-xl">playlist_add_check</span>
               </button>
@@ -167,7 +167,7 @@
               </button>
             </div>
             <button id="save-template-btn"
-              class="w-full mt-3 bg-secondary/10 dark:bg-secondary/20 text-secondary-dark dark:text-secondary font-bold py-2.5 rounded-xl text-sm transition-all active:scale-[0.98]">
+              class="w-full mt-4 bg-primary/10 dark:bg-primary/20 text-primary-dark dark:text-primary-light font-bold py-3 rounded-2xl text-sm transition-all active:scale-[0.98] hover:bg-primary/15">
               Enregistrer la liste actuelle comme modèle
             </button>
           </div>
@@ -195,7 +195,7 @@
     <!-- VIEW: MODE COURSES (Screen 2) -->
     <div id="view-shopping" class="hidden flex-1 flex flex-col w-full h-full relative">
       <header
-        class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10">
+        class="sticky top-0 z-20 glass-panel border-b border-primary/10 transition-all">
         <div class="flex items-center p-4 justify-between">
           <div class="size-10"></div> <!-- Spacer -->
           <h1 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center font-display">Mode Courses</h1>
@@ -211,10 +211,10 @@
             <p id="shopping-count-text" class="text-sm font-semibold text-slate-600 dark:text-slate-300">0 sur 0
               articles</p>
           </div>
-          <div class="w-full h-3 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-            <div id="shopping-progress-bar" class="h-full bg-primary transition-all duration-500" style="width: 0%;">
+            <div class="w-full h-4 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner">
+              <div id="shopping-progress-bar" class="h-full bg-primary transition-all duration-700 ease-out" style="width: 0%;">
+              </div>
             </div>
-          </div>
         </div>
       </header>
 
@@ -235,9 +235,9 @@
     </div>
 
     <!-- VIEW: PROFIL & FAMILLE (Screen 3) -->
-    <div id="view-profile" class="hidden flex-1 flex flex-col w-full h-full relative overflow-y-auto pb-24">
+    <div id="view-profile" class="hidden flex-1 flex flex-col w-full h-full relative overflow-y-auto pb-32">
       <header
-        class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-4 flex items-center justify-between border-b border-primary/10">
+        class="sticky top-0 z-20 glass-panel px-5 py-4 flex items-center justify-between border-b border-slate-200/50 dark:border-slate-800/50 transition-all">
         <h1 class="text-lg font-bold tracking-tight font-display">Family Cart <span
             class="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded ml-1">v1.1</span></h1>
         <div class="flex items-center gap-3">
@@ -383,23 +383,29 @@
       </main>
     </div>
 
-    <!-- BOTTOM NAVIGATION (Shared across main-section) -->
+    <!-- BOTTOM NAVIGATION (Floating iOS style) -->
     <nav
-      class="fixed bottom-0 left-0 right-0 bg-white dark:bg-background-dark border-t border-slate-100 dark:border-slate-800 px-2 pb-6 pt-3 z-30">
-      <div class="flex justify-around items-center max-w-lg mx-auto">
-        <a id="nav-list" class="flex flex-col items-center gap-1 text-primary cursor-pointer w-20 transition-colors">
-          <span class="material-symbols-outlined text-[24px] fill-current">format_list_bulleted</span>
-          <span class="text-[10px] font-bold uppercase tracking-wider">Liste</span>
+      class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm glass-panel rounded-[2rem] shadow-2xl border border-white/40 dark:border-slate-700/50 px-6 py-4 z-40 transition-all">
+      <div class="flex justify-between items-center w-full">
+        <a id="nav-list" class="flex flex-col items-center gap-1.5 text-primary cursor-pointer w-20 transition-all transform active:scale-95 group">
+          <div class="p-2 rounded-2xl bg-primary/10 text-primary transition-colors">
+            <span class="material-symbols-outlined text-[26px] fill-current">format_list_bulleted</span>
+          </div>
+          <span class="text-[10px] font-extrabold uppercase tracking-wider">Liste</span>
         </a>
         <a id="nav-shopping"
-          class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-600 hover:text-primary transition-colors cursor-pointer w-20">
-          <span class="material-symbols-outlined text-[24px]">shopping_basket</span>
-          <span class="text-[10px] font-bold uppercase tracking-wider">Courses</span>
+          class="flex flex-col items-center gap-1.5 text-slate-400 dark:text-slate-500 hover:text-primary transition-all cursor-pointer w-20 transform active:scale-95 group">
+          <div class="p-2 rounded-2xl group-hover:bg-primary/5 transition-colors">
+            <span class="material-symbols-outlined text-[26px]">shopping_basket</span>
+          </div>
+          <span class="text-[10px] font-extrabold uppercase tracking-wider group-hover:text-primary">Courses</span>
         </a>
         <a id="nav-profile"
-          class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-600 hover:text-primary transition-colors cursor-pointer w-20">
-          <span class="material-symbols-outlined text-[24px]">person</span>
-          <span class="text-[10px] font-bold uppercase tracking-wider">Profil</span>
+          class="flex flex-col items-center gap-1.5 text-slate-400 dark:text-slate-500 hover:text-primary transition-all cursor-pointer w-20 transform active:scale-95 group">
+          <div class="p-2 rounded-2xl group-hover:bg-primary/5 transition-colors">
+            <span class="material-symbols-outlined text-[26px]">person</span>
+          </div>
+          <span class="text-[10px] font-extrabold uppercase tracking-wider group-hover:text-primary">Profil</span>
         </a>
       </div>
     </nav>
@@ -410,8 +416,8 @@
   <!-- Template for List View Item -->
   <template id="item-template">
     <li
-      class="item-row flex flex-col bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 group transition-all duration-300">
-      <div class="flex items-center justify-between py-1 px-4">
+      class="item-row flex flex-col bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800/80 group transition-all duration-300 hover:shadow-md hover:border-primary/20">
+      <div class="flex items-center justify-between py-2 px-4">
         <div class="flex items-center gap-3 overflow-hidden flex-1">
           <!-- Poignée de déplacement -->
           <div class="drag-handle cursor-grab active:cursor-grabbing text-slate-300 hover:text-primary transition-colors pr-1">
@@ -438,9 +444,9 @@
   <!-- Template for Shopping Mode Item -->
   <template id="shopping-item-template">
     <li
-      class="item-row flex items-center gap-4 py-2 px-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm active:scale-[0.98] transition-transform cursor-pointer">
+      class="item-row flex items-center gap-4 py-3 px-5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm active:scale-[0.98] transition-all cursor-pointer hover:shadow-md">
       <input type="checkbox"
-        class="item-checkbox checkbox-custom h-7 w-7 rounded-lg border-2 border-primary/30 bg-transparent text-primary focus:ring-primary focus:ring-offset-0 checked:bg-primary checked:border-primary cursor-pointer transition-colors" />
+        class="item-checkbox checkbox-custom h-8 w-8 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-transparent text-primary focus:ring-4 focus:ring-primary/20 focus:ring-offset-0 checked:bg-primary checked:border-primary cursor-pointer transition-all" />
       <div class="flex flex-col overflow-hidden w-full">
         <span
           class="item-display text-base font-semibold truncate transition-all duration-300 text-slate-900 dark:text-slate-100"></span>

@@ -436,7 +436,14 @@ async function loadFamilies() {
 
   if (error) {
     console.error('Erreur lors du chargement des familles', error)
-    shoppingList.innerHTML = '<li class="p-6 text-center text-red-500 font-medium">Erreur de connexion. Réessayez plus tard.</li>'
+    shoppingList.innerHTML = `
+      <li class="p-10 flex flex-col items-center text-center animate-pop-in">
+        <div class="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-3">
+          <span class="material-symbols-outlined text-red-500 text-3xl">error</span>
+        </div>
+        <p class="text-red-500 font-bold">Erreur de connexion</p>
+        <p class="text-slate-400 text-sm mt-1">Veuillez réessayer plus tard.</p>
+      </li>`
     return
   }
 
@@ -444,7 +451,14 @@ async function loadFamilies() {
 
   if (currentFamilies.length === 0) {
     activeFamilyId = null
-    shoppingList.innerHTML = '<li class="p-6 text-center text-slate-400 font-medium italic">Aucune famille trouvée.</li>'
+    shoppingList.innerHTML = `
+      <li class="p-10 flex flex-col items-center text-center animate-pop-in">
+        <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
+          <span class="text-3xl">🏠</span>
+        </div>
+        <p class="text-slate-600 dark:text-slate-300 font-bold">Aucune famille trouvée</p>
+        <p class="text-slate-400 text-sm mt-1">Créez-en une dans l'onglet Profil !</p>
+      </li>`
     shoppingModeList.innerHTML = shoppingList.innerHTML
     updateProfileFamilyView()
     return
@@ -790,7 +804,13 @@ inviteForm.addEventListener('submit', async (e) => {
 
 async function loadShoppingItems() {
   if (!activeFamilyId) {
-    shoppingList.innerHTML = '<li class="p-6 text-center text-slate-400 font-medium italic">Sélectionnez une famille pour voir les articles.</li>'
+    shoppingList.innerHTML = `
+      <li class="p-10 flex flex-col items-center text-center animate-pop-in">
+        <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
+          <span class="material-symbols-outlined text-slate-400 text-3xl">family_restroom</span>
+        </div>
+        <p class="text-slate-600 dark:text-slate-300 font-bold text-lg">Sélectionnez une famille</p>
+      </li>`
     shoppingModeList.innerHTML = shoppingList.innerHTML
     return
   }
@@ -803,7 +823,13 @@ async function loadShoppingItems() {
 
   // On n'affiche le chargement que si la liste est vide (première charge)
   if (shoppingList.children.length === 0 || shoppingList.querySelector('.animate-pulse')) {
-    const loadingHtml = '<li class="p-6 text-center text-slate-400 font-medium italic animate-pulse">Chargement des articles...</li>'
+    const loadingHtml = `
+      <li class="p-10 flex flex-col items-center text-center animate-pulse">
+        <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
+          <span class="material-symbols-outlined text-slate-400 text-3xl animate-spin">sync</span>
+        </div>
+        <p class="text-slate-400 font-semibold">Chargement des articles...</p>
+      </li>`
     shoppingList.innerHTML = loadingHtml
     shoppingModeList.innerHTML = loadingHtml
   }
@@ -864,7 +890,16 @@ function renderLists(items) {
   shoppingProgressBar.style.width = `${progressPercent}%`
 
   if (items.length === 0) {
-    const emptyHtml = '<li class="p-6 text-center text-slate-400 font-medium italic">Votre liste est vide. Ajoutez quelque chose ! ✨</li>'
+    const emptyHtml = `
+      <li class="p-10 flex flex-col items-center justify-center text-center space-y-3 animate-pop-in">
+        <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center shadow-inner">
+          <span class="text-4xl">🛒</span>
+        </div>
+        <div>
+          <h3 class="text-slate-700 dark:text-slate-200 font-extrabold text-lg">Votre liste est prête !</h3>
+          <p class="text-slate-400 font-medium text-sm mt-1">Ajoutez votre premier article ci-dessus.</p>
+        </div>
+      </li>`
     shoppingList.innerHTML = emptyHtml
     shoppingModeList.innerHTML = emptyHtml
     return
