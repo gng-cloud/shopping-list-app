@@ -9,20 +9,20 @@
 </head>
 
 <body
-  class="bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-slate-900 dark:via-slate-900 dark:to-teal-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-display relative overflow-x-hidden">
+  class="bg-gradient-to-br from-emerald-100 via-teal-50 to-green-100 dark:from-slate-900 dark:via-emerald-950 dark:to-teal-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-display relative overflow-x-hidden">
   
-  <!-- Decorative Ambient Background Blobs -->
+  <!-- Decorative Ambient Background Blobs (Stronger overlay) -->
   <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-    <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] max-w-[400px] max-h-[400px] rounded-full bg-emerald-400/20 dark:bg-emerald-600/10 blur-3xl opacity-70 animate-pulse" style="animation-duration: 8s;"></div>
-    <div class="absolute top-[20%] right-[-10%] w-[40vw] h-[40vw] max-w-[300px] max-h-[300px] rounded-full bg-teal-300/30 dark:bg-teal-800/20 blur-3xl opacity-60 animate-pulse" style="animation-duration: 12s; animation-delay: 2s;"></div>
-    <div class="absolute bottom-[-10%] left-[20%] w-[60vw] h-[60vw] max-w-[500px] max-h-[500px] rounded-full bg-green-200/40 dark:bg-emerald-900/30 blur-3xl opacity-50 animate-pulse" style="animation-duration: 10s; animation-delay: 5s;"></div>
+    <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] max-w-[500px] max-h-[500px] rounded-full bg-emerald-400/40 dark:bg-emerald-600/30 blur-[80px] animate-pulse" style="animation-duration: 8s;"></div>
+    <div class="absolute top-[20%] right-[-10%] w-[40vw] h-[40vw] max-w-[400px] max-h-[400px] rounded-full bg-teal-400/40 dark:bg-teal-500/30 blur-[80px] animate-pulse" style="animation-duration: 12s; animation-delay: 2s;"></div>
+    <div class="absolute bottom-[-10%] left-[20%] w-[60vw] h-[60vw] max-w-[600px] max-h-[600px] rounded-full bg-lime-300/40 dark:bg-emerald-800/40 blur-[100px] animate-pulse" style="animation-duration: 10s; animation-delay: 5s;"></div>
   </div>
 
   <!-- AUTH SECTION (keep structure, update styles) -->
   <section id="auth-section"
-    class="relative z-10 flex-1 flex flex-col justify-center items-center px-6 py-10 animate-slide-up-fade glass-panel m-4 rounded-[2rem] shadow-2xl border border-white/60 dark:border-slate-700/30">
-    <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 shadow-inner">
-      <span class="material-symbols-outlined text-primary text-3xl">shopping_cart</span>
+    class="relative z-10 flex-1 flex flex-col justify-center items-center px-6 py-10 animate-slide-up-fade glass-panel m-4 rounded-[2rem] border border-white/50 dark:border-slate-700/30">
+    <div class="w-24 h-24 bg-white/60 dark:bg-slate-800/60 backdrop-blur-md rounded-3xl flex items-center justify-center mb-6 shadow-xl border border-white/50 rotate-3 transition-transform hover:rotate-6">
+      <span class="text-5xl">🛒</span>
     </div>
     <h1 id="auth-title" class="text-3xl font-bold text-center mb-2">Family Cart</h1>
     <p id="auth-subtitle" class="text-center text-slate-500 mb-8 font-medium">Gérez vos listes ensemble</p>
@@ -117,7 +117,7 @@
             <div class="flex flex-1 gap-2 items-center">
               <div class="relative flex-1 group">
                 <input type="text" id="new-item-input" required autocomplete="off"
-                  class="w-full h-14 pl-5 pr-12 rounded-2xl border border-slate-200 dark:border-slate-700/50 bg-white/80 dark:bg-slate-800/80 focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-base placeholder-slate-400 outline-none shadow-sm"
+                  class="w-full h-14 pl-5 pr-12 rounded-2xl border border-white/60 dark:border-slate-700/50 glass-panel focus:bg-white/90 focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all text-base placeholder-slate-500 outline-none shadow-sm"
                   placeholder="Ex: Pommes, Lait..." />
                 <!-- Scan Button -->
                 <button type="button" id="scan-btn"
@@ -130,10 +130,10 @@
                 </div>
               </div>
               <input type="text" id="new-item-quantity"
-                class="w-20 h-14 px-3 rounded-2xl border border-slate-200 dark:border-slate-700/50 bg-white/80 dark:bg-slate-800/80 focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-base placeholder-slate-400 outline-none text-center shadow-sm"
+                class="w-20 h-14 px-3 rounded-2xl border border-white/60 dark:border-slate-700/50 glass-panel focus:bg-white/90 focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all text-base placeholder-slate-500 outline-none text-center shadow-sm"
                 placeholder="Qté" />
               <button type="submit"
-                class="shrink-0 size-14 flex items-center justify-center bg-primary text-white rounded-2xl hover:bg-primary-dark transition-all active:scale-[0.95] shadow-lg shadow-primary/30 cursor-pointer">
+                class="shrink-0 size-14 flex items-center justify-center bg-gradient-to-r from-primary to-teal-400 text-white rounded-2xl hover:brightness-110 transition-all active:scale-[0.95] shadow-lg shadow-primary/30 cursor-pointer">
                 <span class="material-symbols-outlined text-2xl">add</span>
               </button>
             </div>
@@ -156,8 +156,8 @@
         <!-- Templates Section -->
         <section class="mt-2 px-4">
           <div
-            class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-3xl p-5 shadow-sm border border-slate-100 dark:border-slate-800 transition-all">
-            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Listes Types</h2>
+            class="glass-panel rounded-[2rem] p-5 shadow-sm border border-white/60 dark:border-slate-800 transition-all">
+            <h2 class="text-xs font-extrabold text-teal-700/70 dark:text-teal-400/70 uppercase tracking-widest mb-3">Mes Modèles</h2>
             <div class="flex gap-2">
               <select id="template-select"
                 class="flex-1 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl px-4 py-3 text-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all">
@@ -256,8 +256,10 @@
         <section class="p-6 flex flex-col items-center">
           <div class="relative">
             <div
-              class="w-24 h-24 rounded-full border-4 border-primary/20 p-1 bg-background-light dark:bg-slate-800 flex items-center justify-center">
-              <span class="material-symbols-outlined text-4xl text-primary">person</span>
+              class="w-28 h-28 rounded-[2rem] rotate-3 bg-gradient-to-tr from-emerald-400 to-teal-300 dark:from-emerald-600 dark:to-teal-700 p-1 flex items-center justify-center shadow-2xl">
+              <div class="w-full h-full bg-white/90 dark:bg-slate-900/90 rounded-[1.8rem] flex items-center justify-center -rotate-3 transition-transform hover:rotate-0">
+                <span class="text-5xl">👋</span>
+              </div>
             </div>
           </div>
           <div class="mt-4 text-center">
@@ -329,18 +331,18 @@
         </section>
         <section class="mt-6 px-6">
           <div
-            class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm space-y-4 border border-slate-100 dark:border-slate-700/50">
+            class="glass-panel p-6 rounded-[2rem] border border-white/50 dark:border-slate-700/50">
             <h2 class="text-xl font-bold flex items-center gap-2">
               <span
-                class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">👨‍👩‍👧‍👦</span>
+                class="w-10 h-10 rounded-2xl bg-white/60 dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm border border-white/50">👨‍👩‍👧‍👦</span>
               Nouvelle Famille
             </h2>
             <form id="create-family-form" class="flex gap-2">
               <input type="text" id="new-family-name"
-                class="flex-1 bg-slate-50 dark:bg-slate-900 border-none rounded-2xl px-4 py-3 focus:ring-2 focus:ring-primary/20 text-slate-900 dark:text-white"
+                class="flex-1 bg-white/70 dark:bg-slate-900/70 border border-white/50 dark:border-slate-700/50 rounded-2xl px-4 py-3 focus:ring-4 focus:ring-primary/20 text-slate-900 dark:text-white outline-none placeholder-slate-500"
                 placeholder="Nom de la famille...">
               <button type="submit"
-                class="bg-primary text-white font-bold px-6 rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                class="bg-gradient-to-r from-primary to-teal-400 text-white font-bold px-6 rounded-2xl shadow-lg shadow-primary/30 active:scale-95 transition-all">
                 Créer
               </button>
             </form>
@@ -424,19 +426,19 @@
   <!-- Template for List View Item -->
   <template id="item-template">
     <li
-      class="item-row flex flex-col bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800/80 group transition-all duration-300 hover:shadow-md hover:border-primary/20">
-      <div class="flex items-center justify-between py-2 px-4">
+      class="item-row flex flex-col glass-panel rounded-2xl shadow-lg border border-white/50 dark:border-slate-700/50 mb-3 mx-1 group transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-white/80">
+      <div class="flex items-center justify-between py-2.5 px-3">
         <div class="flex items-center gap-3 overflow-hidden flex-1">
           <!-- Poignée de déplacement -->
-          <div class="drag-handle cursor-grab active:cursor-grabbing text-slate-300 hover:text-primary transition-colors pr-1">
-            <span class="material-symbols-outlined text-lg">drag_indicator</span>
+          <div class="drag-handle cursor-grab active:cursor-grabbing text-slate-400/50 hover:text-primary transition-colors px-1">
+            <span class="material-symbols-outlined text-xl">drag_indicator</span>
           </div>
           <div
-            class="size-8 shrink-0 rounded-lg bg-background-light dark:bg-background-dark flex items-center justify-center item-icon-container">
-            <span class="material-symbols-outlined text-primary text-lg item-icon">category</span>
+            class="size-10 shrink-0 rounded-xl bg-white/60 dark:bg-slate-800/60 shadow-sm border border-white/50 flex items-center justify-center item-icon-container">
+            <span class="material-symbols-outlined text-primary text-xl item-icon">fastfood</span>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="item-display font-semibold text-slate-800 dark:text-slate-100 truncate"></p>
+            <p class="item-display font-bold text-slate-800 dark:text-slate-100 text-[1.05rem] truncate"></p>
           </div>
         </div>
         <div class="flex items-center">
@@ -452,12 +454,12 @@
   <!-- Template for Shopping Mode Item -->
   <template id="shopping-item-template">
     <li
-      class="item-row flex items-center gap-4 py-3 px-5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm active:scale-[0.98] transition-all cursor-pointer hover:shadow-md">
+      class="item-row flex items-center gap-5 py-3.5 px-5 glass-panel rounded-2xl border border-white/50 dark:border-slate-700/50 shadow-lg active:scale-[0.98] transition-all cursor-pointer hover:-translate-y-1 mb-3 mx-1">
       <input type="checkbox"
-        class="item-checkbox checkbox-custom h-8 w-8 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-transparent text-primary focus:ring-4 focus:ring-primary/20 focus:ring-offset-0 checked:bg-primary checked:border-primary cursor-pointer transition-all" />
-      <div class="flex flex-col overflow-hidden w-full">
+        class="item-checkbox checkbox-custom h-8 w-8 rounded-xl border-2 border-slate-300/50 dark:border-slate-600 bg-white/50 dark:bg-slate-800/50 text-primary focus:ring-4 focus:ring-primary/20 focus:ring-offset-0 checked:bg-gradient-to-tr checked:from-primary checked:to-teal-400 checked:border-transparent cursor-pointer transition-all shadow-sm" />
+      <div class="flex flex-col overflow-hidden w-full pt-1">
         <span
-          class="item-display text-base font-semibold truncate transition-all duration-300 text-slate-900 dark:text-slate-100"></span>
+          class="item-display text-lg font-bold truncate transition-all duration-300 text-slate-800 dark:text-slate-100 leading-none"></span>
       </div>
     </li>
   </template>
