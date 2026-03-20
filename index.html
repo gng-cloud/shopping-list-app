@@ -9,10 +9,18 @@
 </head>
 
 <body
-  class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-display">
+  class="bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-slate-900 dark:via-slate-900 dark:to-teal-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-display relative overflow-x-hidden">
+  
+  <!-- Decorative Ambient Background Blobs -->
+  <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] max-w-[400px] max-h-[400px] rounded-full bg-emerald-400/20 dark:bg-emerald-600/10 blur-3xl opacity-70 animate-pulse" style="animation-duration: 8s;"></div>
+    <div class="absolute top-[20%] right-[-10%] w-[40vw] h-[40vw] max-w-[300px] max-h-[300px] rounded-full bg-teal-300/30 dark:bg-teal-800/20 blur-3xl opacity-60 animate-pulse" style="animation-duration: 12s; animation-delay: 2s;"></div>
+    <div class="absolute bottom-[-10%] left-[20%] w-[60vw] h-[60vw] max-w-[500px] max-h-[500px] rounded-full bg-green-200/40 dark:bg-emerald-900/30 blur-3xl opacity-50 animate-pulse" style="animation-duration: 10s; animation-delay: 5s;"></div>
+  </div>
+
   <!-- AUTH SECTION (keep structure, update styles) -->
   <section id="auth-section"
-    class="flex-1 flex flex-col justify-center items-center px-6 py-10 animate-slide-up-fade glass-panel m-4 rounded-[2rem] shadow-2xl border border-white/50 dark:border-slate-700/30">
+    class="relative z-10 flex-1 flex flex-col justify-center items-center px-6 py-10 animate-slide-up-fade glass-panel m-4 rounded-[2rem] shadow-2xl border border-white/60 dark:border-slate-700/30">
     <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 shadow-inner">
       <span class="material-symbols-outlined text-primary text-3xl">shopping_cart</span>
     </div>
@@ -62,7 +70,7 @@
   </section>
 
   <!-- MAIN APP SECTION -->
-  <section id="main-section" class="hidden flex-1 flex flex-col w-full h-full animate-slide-up-fade relative">
+  <section id="main-section" class="relative z-10 hidden flex-1 flex flex-col w-full h-full animate-slide-up-fade">
 
     <!-- VIEW: MA LISTE (Screen 1) -->
     <div id="view-list" class="flex-1 flex flex-col w-full h-full relative">
