@@ -9,21 +9,15 @@
 </head>
 
 <body
-  class="bg-gradient-to-br from-emerald-100 via-teal-50 to-green-100 dark:from-slate-900 dark:via-emerald-950 dark:to-teal-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-display relative overflow-x-hidden">
-  
-  <!-- Decorative Ambient Background Blobs (Stronger overlay) -->
-  <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-    <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] max-w-[500px] max-h-[500px] rounded-full bg-emerald-400/40 dark:bg-emerald-600/30 blur-[80px] animate-pulse" style="animation-duration: 8s;"></div>
-    <div class="absolute top-[20%] right-[-10%] w-[40vw] h-[40vw] max-w-[400px] max-h-[400px] rounded-full bg-teal-400/40 dark:bg-teal-500/30 blur-[80px] animate-pulse" style="animation-duration: 12s; animation-delay: 2s;"></div>
-    <div class="absolute bottom-[-10%] left-[20%] w-[60vw] h-[60vw] max-w-[600px] max-h-[600px] rounded-full bg-lime-300/40 dark:bg-emerald-800/40 blur-[100px] animate-pulse" style="animation-duration: 10s; animation-delay: 5s;"></div>
-  </div>
+  class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-display selection:bg-primary/20">
 
-  <!-- AUTH SECTION (keep structure, update styles) -->
+  <!-- AUTH SECTION -->
   <section id="auth-section"
-    class="relative z-10 flex-1 flex flex-col justify-center items-center px-6 py-10 animate-slide-up-fade glass-panel m-4 rounded-[2rem] border border-white/50 dark:border-slate-700/30">
-    <div class="w-24 h-24 bg-white/60 dark:bg-slate-800/60 backdrop-blur-md rounded-3xl flex items-center justify-center mb-6 shadow-xl border border-white/50 rotate-3 transition-transform hover:rotate-6">
-      <span class="text-5xl">🛒</span>
-    </div>
+    class="relative z-10 flex-1 flex flex-col justify-center items-center px-6 py-10 animate-slide-up-fade">
+    <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-slate-200/60 dark:border-slate-800">
+      <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+        <span class="material-symbols-outlined text-primary text-3xl">shopping_cart</span>
+      </div>
     <h1 id="auth-title" class="text-3xl font-bold text-center mb-2">Family Cart</h1>
     <p id="auth-subtitle" class="text-center text-slate-500 mb-8 font-medium">Gérez vos listes ensemble</p>
 
@@ -31,42 +25,43 @@
       <div id="first-name-container" class="hidden">
         <label class="block text-sm font-semibold mb-1 text-slate-700 dark:text-slate-300">Prénom</label>
         <input type="text" id="first-name"
-          class="block w-full rounded-2xl px-5 py-3.5 bg-background-light/50 dark:bg-background-dark/50 border border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+          class="block w-full rounded-xl px-4 py-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
           placeholder="Ton prénom">
       </div>
       <div>
-        <label class="block text-sm font-semibold mb-1 text-slate-700 dark:text-slate-300">Email</label>
+        <label class="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">Email</label>
         <input type="email" id="email" required
-          class="block w-full rounded-2xl px-5 py-3.5 bg-background-light/50 dark:bg-background-dark/50 border border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+          class="block w-full rounded-xl px-4 py-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
           placeholder="vous@exemple.com">
       </div>
       <div id="password-container">
-        <label class="block text-sm font-semibold mb-1 text-slate-700 dark:text-slate-300">Mot de passe</label>
+        <label class="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">Mot de passe</label>
         <input type="password" id="password" required
-          class="block w-full rounded-2xl px-5 py-3.5 bg-background-light/50 dark:bg-background-dark/50 border border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+          class="block w-full rounded-xl px-4 py-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
           placeholder="••••••••">
-        <div class="text-right mt-1">
-          <button type="button" id="forgot-password-btn" class="text-xs text-primary hover:underline cursor-pointer">
+        <div class="text-right mt-2">
+          <button type="button" id="forgot-password-btn" class="text-sm text-primary hover:underline cursor-pointer font-medium">
             Mot de passe oublié ?
           </button>
         </div>
       </div>
-      <div id="auth-error" class="text-red-500 text-sm hidden font-medium text-center bg-red-100 p-2 rounded-lg py-2">
+      <div id="auth-error" class="text-red-600 text-sm hidden font-medium text-center bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-100 dark:border-red-900/50">
       </div>
 
-      <div class="pt-2">
+      <div class="pt-4">
         <button type="submit" id="auth-submit-btn"
-          class="w-full bg-primary hover:bg-primary-dark text-white font-bold px-4 py-4 rounded-2xl transition-all active:scale-[0.98] shadow-lg shadow-primary/30 cursor-pointer">
+          class="w-full bg-primary hover:bg-primary-dark text-white font-bold px-4 py-3.5 rounded-xl transition-all shadow-[0_4px_14px_0_rgba(16,185,129,0.2)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.23)] cursor-pointer">
           Se connecter
         </button>
       </div>
-      <div class="text-center pt-4">
+      <div class="text-center pt-5">
         <button type="button" id="auth-toggle-btn"
-          class="text-primary font-bold text-sm hover:underline cursor-pointer">
+          class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary font-medium text-sm transition-colors cursor-pointer">
           Pas de compte ? Créer un compte
         </button>
       </div>
     </form>
+    </div>
   </section>
 
   <!-- MAIN APP SECTION -->
@@ -76,7 +71,7 @@
     <div id="view-list" class="flex-1 flex flex-col w-full h-full relative">
       <!-- Header -->
       <header
-        class="sticky top-0 z-20 glass-panel border-b border-slate-200/50 dark:border-slate-800/50 px-5 py-4 flex items-center gap-4 flex-row w-full transition-all">
+        class="sticky top-0 z-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 px-5 py-3.5 flex items-center gap-4 flex-row w-full transition-all">
         <!-- Family selector used to be here, let's put it here or in Profile. Let's keep it here for quick switch -->
         <div class="relative flex-1">
           <select id="family-select"
@@ -111,30 +106,29 @@
         </section>
 
         <!-- Add Item Section -->
-        <section class="px-4 py-3">
-          <label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">Ajouter un article</label>
-          <form id="add-item-form" class="flex gap-2">
+        <section class="px-4 py-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+          <form id="add-item-form" class="flex gap-2 max-w-lg mx-auto">
             <div class="flex flex-1 gap-2 items-center">
               <div class="relative flex-1 group">
                 <input type="text" id="new-item-input" required autocomplete="off"
-                  class="w-full h-14 pl-5 pr-12 rounded-2xl border border-white/60 dark:border-slate-700/50 glass-panel focus:bg-white/90 focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all text-base placeholder-slate-500 outline-none shadow-sm"
-                  placeholder="Ex: Pommes, Lait..." />
+                  class="w-full h-12 pl-4 pr-10 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:ring-1 focus:ring-primary focus:border-primary transition-all text-sm placeholder-slate-400 outline-none"
+                  placeholder="Ajouter un produit..." />
                 <!-- Scan Button -->
                 <button type="button" id="scan-btn"
-                  class="absolute right-2 top-1/2 -translate-y-1/2 size-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors cursor-pointer">
+                  class="absolute right-1 top-1/2 -translate-y-1/2 size-10 flex items-center justify-center text-slate-400 hover:text-primary transition-colors cursor-pointer">
                   <span class="material-symbols-outlined text-xl">barcode_scanner</span>
                 </button>
                 <!-- Custom Suggestions -->
                 <div id="suggestions-container"
-                  class="hidden absolute left-0 right-0 top-full mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto">
+                  class="hidden absolute left-0 right-0 top-full mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
                 </div>
               </div>
               <input type="text" id="new-item-quantity"
-                class="w-20 h-14 px-3 rounded-2xl border border-white/60 dark:border-slate-700/50 glass-panel focus:bg-white/90 focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all text-base placeholder-slate-500 outline-none text-center shadow-sm"
+                class="w-16 h-12 px-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:bg-white dark:focus:bg-slate-900 focus:ring-1 focus:ring-primary focus:border-primary transition-all text-sm placeholder-slate-400 outline-none text-center"
                 placeholder="Qté" />
               <button type="submit"
-                class="shrink-0 size-14 flex items-center justify-center bg-gradient-to-r from-primary to-teal-400 text-white rounded-2xl hover:brightness-110 transition-all active:scale-[0.95] shadow-lg shadow-primary/30 cursor-pointer">
-                <span class="material-symbols-outlined text-2xl">add</span>
+                class="shrink-0 h-12 px-4 flex items-center justify-center bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark transition-colors cursor-pointer">
+                Ajouter
               </button>
             </div>
           </form>
@@ -153,49 +147,48 @@
             Scanning...</p>
         </div>
 
-        <!-- Templates Section -->
-        <section class="mt-2 px-4">
+        <section class="mt-4 px-4 max-w-lg mx-auto">
           <div
-            class="glass-panel rounded-[2rem] p-5 shadow-sm border border-white/60 dark:border-slate-800 transition-all">
-            <h2 class="text-xs font-extrabold text-teal-700/70 dark:text-teal-400/70 uppercase tracking-widest mb-3">Mes Modèles</h2>
+            class="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-800 transition-all">
+            <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Modèles de Liste</h2>
             <div class="flex gap-2">
               <select id="template-select"
-                class="flex-1 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl px-4 py-3 text-sm focus:ring-4 focus:ring-primary/10 outline-none transition-all">
-                <option value="">Charger une liste...</option>
+                class="flex-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all">
+                <option value="">Charger un modèle...</option>
               </select>
               <button id="apply-template-btn"
-                class="bg-primary hover:bg-primary-dark text-white font-bold p-3 rounded-2xl transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 shadow-md shadow-primary/20"
+                class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium p-2 rounded-lg transition-colors disabled:opacity-50"
                 title="Appliquer cette liste">
-                <span class="material-symbols-outlined text-xl">playlist_add_check</span>
+                <span class="material-symbols-outlined text-[20px]">playlist_add_check</span>
               </button>
               <button id="delete-template-btn"
-                class="bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 p-2 rounded-xl transition-all active:scale-95 disabled:opacity-50"
+                class="bg-slate-100 hover:bg-red-50 dark:bg-slate-800 dark:hover:bg-red-900/20 text-slate-500 hover:text-red-600 dark:hover:text-red-400 p-2 rounded-lg transition-colors disabled:opacity-50"
                 title="Supprimer cette liste type">
-                <span class="material-symbols-outlined text-xl">delete</span>
+                <span class="material-symbols-outlined text-[20px]">delete</span>
               </button>
             </div>
             <button id="save-template-btn"
-              class="w-full mt-4 bg-primary/10 dark:bg-primary/20 text-primary-dark dark:text-primary-light font-bold py-3 rounded-2xl text-sm transition-all active:scale-[0.98] hover:bg-primary/15">
-              Enregistrer la liste actuelle comme modèle
+              class="w-full mt-3 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium py-2 rounded-lg text-sm transition-colors cursor-pointer">
+              Enregistrer comme modèle
             </button>
           </div>
         </section>
 
         <!-- List Items Section -->
-        <section class="mt-4 px-4">
-          <button id="clear-completed-btn"
-            class="w-full py-4 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-800 text-slate-400 font-bold flex items-center justify-center gap-2 hover:border-primary/40 hover:text-primary transition-colors cursor-pointer mb-24">
-            <span class="material-symbols-outlined">delete_sweep</span>
-            Vider les articles achetés
-          </button>
-          <div class="flex items-center justify-between mb-2">
-            <h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300">Articles à acheter</h2>
-            <span id="list-count" class="text-xs font-medium bg-slate-200 dark:bg-slate-800 px-2 py-1 rounded-full">0
-              article</span>
+        <section class="mt-4 px-4 max-w-lg mx-auto">
+          <div class="flex items-center justify-between mb-3 px-1">
+            <h2 class="text-sm font-semibold text-slate-800 dark:text-slate-200">Articles à acheter</h2>
+            <span id="list-count" class="text-xs font-medium bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded-full text-slate-600 dark:text-slate-300">0 article</span>
           </div>
           <ul id="shopping-list" class="space-y-1">
             <li class="p-6 text-center text-slate-400 font-medium italic animate-pulse">Chargement...</li>
           </ul>
+          
+          <button id="clear-completed-btn"
+            class="w-full mt-4 py-3 rounded-lg border border-dashed border-slate-300 dark:border-slate-700 text-slate-500 font-medium flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer mb-24 text-sm">
+            <span class="material-symbols-outlined text-[18px]">delete_sweep</span>
+            Vider les articles achetés
+          </button>
         </section>
       </main>
     </div>
@@ -203,7 +196,7 @@
     <!-- VIEW: MODE COURSES (Screen 2) -->
     <div id="view-shopping" class="hidden flex-1 flex flex-col w-full h-full relative">
       <header
-        class="sticky top-0 z-20 glass-panel border-b border-primary/10 transition-all">
+        class="sticky top-0 z-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-all">
         <div class="flex items-center p-4 justify-between">
           <div class="size-10"></div> <!-- Spacer -->
           <h1 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center font-display">Mode Courses</h1>
@@ -219,7 +212,7 @@
             <p id="shopping-count-text" class="text-sm font-semibold text-slate-600 dark:text-slate-300">0 sur 0
               articles</p>
           </div>
-            <div class="w-full h-4 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner">
+            <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
               <div id="shopping-progress-bar" class="h-full bg-primary transition-all duration-700 ease-out" style="width: 0%;">
               </div>
             </div>
@@ -245,7 +238,7 @@
     <!-- VIEW: PROFIL & FAMILLE (Screen 3) -->
     <div id="view-profile" class="hidden flex-1 flex flex-col w-full h-full relative overflow-y-auto pb-32">
       <header
-        class="sticky top-0 z-20 glass-panel px-5 py-4 flex items-center justify-between border-b border-slate-200/50 dark:border-slate-800/50 transition-all">
+        class="sticky top-0 z-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 px-5 py-3.5 flex items-center justify-between transition-all">
         <h1 class="text-lg font-bold tracking-tight font-display">Family Cart <span
             class="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded ml-1">v1.1</span></h1>
         <div class="flex items-center gap-3">
@@ -329,24 +322,25 @@
 
           </div>
         </section>
-        <section class="mt-6 px-6">
+        <section class="mt-6 px-4 max-w-lg mx-auto">
           <div
-            class="glass-panel p-6 rounded-[2rem] border border-white/50 dark:border-slate-700/50">
-            <h2 class="text-xl font-bold flex items-center gap-2">
+            class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <h2 class="text-sm font-semibold flex items-center gap-2 mb-4 text-slate-800 dark:text-slate-200">
               <span
-                class="w-10 h-10 rounded-2xl bg-white/60 dark:bg-slate-800 flex items-center justify-center text-xl shadow-sm border border-white/50">👨‍👩‍👧‍👦</span>
+                class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300">
+                <span class="material-symbols-outlined text-sm">group_add</span>
+              </span>
               Nouvelle Famille
             </h2>
             <form id="create-family-form" class="flex gap-2">
               <input type="text" id="new-family-name"
-                class="flex-1 bg-white/70 dark:bg-slate-900/70 border border-white/50 dark:border-slate-700/50 rounded-2xl px-4 py-3 focus:ring-4 focus:ring-primary/20 text-slate-900 dark:text-white outline-none placeholder-slate-500"
+                class="flex-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 focus:ring-1 focus:ring-primary focus:border-primary text-slate-900 dark:text-white outline-none placeholder-slate-400 text-sm"
                 placeholder="Nom de la famille...">
               <button type="submit"
-                class="bg-gradient-to-r from-primary to-teal-400 text-white font-bold px-6 rounded-2xl shadow-lg shadow-primary/30 active:scale-95 transition-all">
+                class="bg-primary text-white font-medium px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors text-sm cursor-pointer whitespace-nowrap shadow-sm shadow-primary/20">
                 Créer
               </button>
             </form>
-            <p id="create-family-msg" class="text-xs mt-2 hidden"></p>
           </div>
         </section>
 
@@ -393,29 +387,24 @@
       </main>
     </div>
 
-    <!-- BOTTOM NAVIGATION (Floating iOS style) -->
+    <!-- BOTTOM NAVIGATION (Clean Professional Style) -->
     <nav
-      class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm glass-panel rounded-[2rem] shadow-2xl border border-white/40 dark:border-slate-700/50 px-6 py-4 z-40 transition-all">
-      <div class="flex justify-between items-center w-full">
-        <a id="nav-list" class="flex flex-col items-center gap-1.5 text-primary cursor-pointer w-20 transition-all transform active:scale-95 group">
-          <div class="p-2 rounded-2xl bg-primary/10 text-primary transition-colors">
-            <span class="material-symbols-outlined text-[26px] fill-current">format_list_bulleted</span>
-          </div>
-          <span class="text-[10px] font-extrabold uppercase tracking-wider">Liste</span>
+      class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-4 pb-safe pt-2 z-40">
+      <!-- padding-bottom for safe area could be added via main css if needed, using custom values here to ensure thumb reachability without floating -->
+      <div class="flex justify-around items-center max-w-lg mx-auto h-16">
+        <a id="nav-list" class="flex flex-col items-center justify-center w-20 h-full text-primary cursor-pointer transition-colors group">
+          <span class="material-symbols-outlined text-[24px] mb-1 group-active:scale-90 transition-transform">format_list_bulleted</span>
+          <span class="text-[10px] font-semibold tracking-wide">Liste</span>
         </a>
         <a id="nav-shopping"
-          class="flex flex-col items-center gap-1.5 text-slate-400 dark:text-slate-500 hover:text-primary transition-all cursor-pointer w-20 transform active:scale-95 group">
-          <div class="p-2 rounded-2xl group-hover:bg-primary/5 transition-colors">
-            <span class="material-symbols-outlined text-[26px]">shopping_basket</span>
-          </div>
-          <span class="text-[10px] font-extrabold uppercase tracking-wider group-hover:text-primary">Courses</span>
+          class="flex flex-col items-center justify-center w-20 h-full text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 cursor-pointer transition-colors group">
+          <span class="material-symbols-outlined text-[24px] mb-1 group-active:scale-90 transition-transform">shopping_basket</span>
+          <span class="text-[10px] font-semibold tracking-wide">Courses</span>
         </a>
         <a id="nav-profile"
-          class="flex flex-col items-center gap-1.5 text-slate-400 dark:text-slate-500 hover:text-primary transition-all cursor-pointer w-20 transform active:scale-95 group">
-          <div class="p-2 rounded-2xl group-hover:bg-primary/5 transition-colors">
-            <span class="material-symbols-outlined text-[26px]">person</span>
-          </div>
-          <span class="text-[10px] font-extrabold uppercase tracking-wider group-hover:text-primary">Profil</span>
+          class="flex flex-col items-center justify-center w-20 h-full text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 cursor-pointer transition-colors group">
+          <span class="material-symbols-outlined text-[24px] mb-1 group-active:scale-90 transition-transform">person</span>
+          <span class="text-[10px] font-semibold tracking-wide">Profil</span>
         </a>
       </div>
     </nav>
@@ -426,25 +415,21 @@
   <!-- Template for List View Item -->
   <template id="item-template">
     <li
-      class="item-row flex flex-col glass-panel rounded-2xl shadow-lg border border-white/50 dark:border-slate-700/50 mb-3 mx-1 group transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-white/80">
-      <div class="flex items-center justify-between py-2.5 px-3">
+      class="item-row flex flex-col bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 mb-2 group transition-shadow hover:shadow-md">
+      <div class="flex items-center justify-between py-2 px-3">
         <div class="flex items-center gap-3 overflow-hidden flex-1">
           <!-- Poignée de déplacement -->
-          <div class="drag-handle cursor-grab active:cursor-grabbing text-slate-400/50 hover:text-primary transition-colors px-1">
-            <span class="material-symbols-outlined text-xl">drag_indicator</span>
-          </div>
-          <div
-            class="size-10 shrink-0 rounded-xl bg-white/60 dark:bg-slate-800/60 shadow-sm border border-white/50 flex items-center justify-center item-icon-container">
-            <span class="material-symbols-outlined text-primary text-xl item-icon">fastfood</span>
+          <div class="drag-handle cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-500 transition-colors">
+            <span class="material-symbols-outlined text-lg">drag_indicator</span>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="item-display font-bold text-slate-800 dark:text-slate-100 text-[1.05rem] truncate"></p>
+            <p class="item-display font-medium text-slate-800 dark:text-slate-100 text-[0.95rem] truncate"></p>
           </div>
         </div>
         <div class="flex items-center">
           <button
-            class="item-delete text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-lg transition-colors cursor-pointer focus:outline-none">
-            <span class="material-symbols-outlined text-sm">remove</span>
+            class="item-delete text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 p-1.5 rounded-md transition-colors cursor-pointer focus:outline-none">
+            <span class="material-symbols-outlined text-[18px]">remove</span>
           </button>
         </div>
       </div>
@@ -454,12 +439,12 @@
   <!-- Template for Shopping Mode Item -->
   <template id="shopping-item-template">
     <li
-      class="item-row flex items-center gap-5 py-3.5 px-5 glass-panel rounded-2xl border border-white/50 dark:border-slate-700/50 shadow-lg active:scale-[0.98] transition-all cursor-pointer hover:-translate-y-1 mb-3 mx-1">
+      class="item-row flex items-center gap-4 py-3 px-4 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm active:bg-slate-50 dark:active:bg-slate-800 transition-colors cursor-pointer mb-2">
       <input type="checkbox"
-        class="item-checkbox checkbox-custom h-8 w-8 rounded-xl border-2 border-slate-300/50 dark:border-slate-600 bg-white/50 dark:bg-slate-800/50 text-primary focus:ring-4 focus:ring-primary/20 focus:ring-offset-0 checked:bg-gradient-to-tr checked:from-primary checked:to-teal-400 checked:border-transparent cursor-pointer transition-all shadow-sm" />
-      <div class="flex flex-col overflow-hidden w-full pt-1">
+        class="item-checkbox checkbox-custom h-6 w-6 rounded border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-primary focus:ring-2 focus:ring-primary/20 focus:ring-offset-0 transition-colors shadow-sm" />
+      <div class="flex flex-col overflow-hidden w-full pt-0.5">
         <span
-          class="item-display text-lg font-bold truncate transition-all duration-300 text-slate-800 dark:text-slate-100 leading-none"></span>
+          class="item-display text-base font-medium truncate transition-all duration-300 text-slate-800 dark:text-slate-100"></span>
       </div>
     </li>
   </template>
