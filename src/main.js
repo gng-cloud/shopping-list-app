@@ -908,10 +908,14 @@ function renderLists(items) {
 
     if (item.is_completed) {
       nameSpan.classList.add('line-through', 'text-slate-400', 'dark:text-slate-500')
-      iconContainer.classList.remove('border-primary/20', 'bg-background-light')
-      iconContainer.classList.add('border-slate-200', 'dark:border-slate-800', 'bg-slate-50', 'dark:bg-slate-900')
-      iconSpan.classList.remove('text-primary')
-      iconSpan.classList.add('text-slate-400')
+      if (iconContainer) {
+        iconContainer.classList.remove('border-primary/20', 'bg-background-light')
+        iconContainer.classList.add('border-slate-200', 'dark:border-slate-800', 'bg-slate-50', 'dark:bg-slate-900')
+      }
+      if (iconSpan) {
+        iconSpan.classList.remove('text-primary')
+        iconSpan.classList.add('text-slate-400')
+      }
     }
 
     deleteBtn.addEventListener('click', () => deleteItem(item.id))
